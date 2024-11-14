@@ -1,0 +1,5189 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Andy Royle, Emily Wapman, Will Heinle, Noelle Beswick" />
+
+
+<title>Quantitative Turtle Analysis Project</title>
+
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/htmlwidgets-1.5.4/htmlwidgets.js"></script>
+<link href="site_libs/leaflet-1.3.1/leaflet.css" rel="stylesheet" />
+<script src="site_libs/leaflet-1.3.1/leaflet.js"></script>
+<link href="site_libs/leafletfix-1.0.0/leafletfix.css" rel="stylesheet" />
+<script src="site_libs/proj4-2.6.2/proj4.min.js"></script>
+<script src="site_libs/Proj4Leaflet-1.0.1/proj4leaflet.js"></script>
+<link href="site_libs/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet" />
+<script src="site_libs/leaflet-binding-2.1.1/leaflet.js"></script>
+<script src="site_libs/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script>
+<script src="site_libs/leaflet-providers-plugin-2.1.1/leaflet-providers-plugin.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html"></a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown-header">QTAP</li>
+<li>
+  <a href="Report2.html"></a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Quantitative Turtle Analysis Project</h1>
+<h4 class="author">Andy Royle, Emily Wapman, Will Heinle, Noelle Beswick</h4>
+<h4 class="date">2022 Annual Report</h4>
+
+</div>
+
+
+<style type="text/css">
+
+h1.title {
+  font-size: 38px;
+  color: Black;
+  text-align: center;
+  font-family:"Times New Roman";
+}
+
+h4.author { /* Header 4 - and the author and data headers use this too  */
+    font-size: 20px;
+  font-family: "Times New Roman", Times, serif;
+  color: Black;
+  text-align: center;
+}
+h4.date { /* Header 4 - and the author and data headers use this too  */
+  font-size: 20px;
+  font-family: "Times New Roman", Times, serif;
+  color: Black;
+  text-align: center;
+}
+
+body{
+  font-family: "Times New Roman";
+  font-size: 20px;
+}
+</style>
+<center>
+USGS Eastern Ecological Science Center
+</center>
+<div id="highlights" class="section level3">
+<h3><strong>Highlights</strong></h3>
+<ul>
+<li>Will and Noelle received fellowships through the University of Richmond, leading the detection study, field sampling, and data management during the first half of summer.</li>
+<li>Emily participated in the ESA/USGS Cooperative Summer Field Training Program, leading field sampling and data management during the second half of summer.</li>
+<li>The project was supported by several high school participants, including two visits by the Youth Conservation Corps and high school senior, Auden.</li>
+<li>The detection study was supported by on-going collaboration with Dr. Steve Kimble from Towson University.</li>
+<li>229 surveys were conducted, with a total of 114 live captures.48 surveys were conducted for the detection study and resulted in 12 live captures. 86 were unique individuals, and 41 were new captures.</li>
+<li>Stickel plot was surveyed 76 times and had 74 live captures, 21 of which were new. Snowden plot was surveyed 150 times and had 40 live captures, 12 of which were new. 4 additional surveys were focused at South Tract.</li>
+</ul>
+<center>
+<div class="figure">
+<img src="Report2-andy_files/figure-html/unnamed-chunk-8-1.png" alt="**Figure 1:** Forest survey plots for the Quantitative Turtle Analysis Project on Patuxent Refuge. The white outlines Stickel plot and the pink outlines the core Snowden plot. Additional Snowden surveys not shown were located by the pond, by river road, and in the triangle and cabin detection plots." width="603" />
+<p class="caption">
+<strong>Figure 1:</strong> Forest survey plots for the Quantitative Turtle Analysis Project on Patuxent Refuge. The white outlines Stickel plot and the pink outlines the core Snowden plot. Additional Snowden surveys not shown were located by the pond, by river road, and in the triangle and cabin detection plots.
+</p>
+</div>
+</center>
+<center>
+<img src="Report2-andy_files/figure-html/unnamed-chunk-9-1.png" width="702" />
+</center>
+<center>
+<img src="Report2-andy_files/figure-html/unnamed-chunk-10-1.png" width="724" />
+</center>
+</div>
+<div id="background" class="section level3">
+<h3><strong>Background</strong></h3>
+<p>The Quantitative Turtle Analysis Project (QTAP) was created in 2019 with the goal of investigating how machine learning can be used to study wildlife populations using capture-recapture methods. Specifically, QTAP investigates how digital images of the eastern box turtle (Terrapene carolina carolina) can be used by automated programs to recognize unique individual turtles in place of marking systems like scute-notching, which is the current marking protocol. For the past four years, the QTAP field protocol has involved eastern box turtle field searches in two refuge plots, although some surveys extend outside the defined borders (Figure 1). Measurements and identifying photographs are taken for each turtle on each capture occasion. This protocol, combined with community science photo reports, has provided QTAP with over 500 turtle carapace photos and contributes meaningful data for capture-recapture analysis for monitoring the eastern box turtle populations at the Patuxent Wildlife Refuge. This project builds upon decades of eastern box turtle research initiated by former Patuxent Wildlife Research Center director, Lucille Farrier Stickel, in the 1940s, contributing to long-term monitoring and analysis of population changes over time. (Stickel, 1950).</p>
+</div>
+<div id="research" class="section level3">
+<h3><strong>Research</strong></h3>
+<p>The 2022 QTAP field effort was supported by three technicians this summer. Will Heinle received an Arts and Sciences Research Fellowship and Noelle Beswick was supported by the Spider Internship Fund, both through the University of Richmond. Emily Wapman was hired through the ESA/USGS Cooperative Summer Field Training Program, a collaborative program with the Ecological Society of America and USGS to place undergraduate students in USGS research labs with assigned mentors. Will and Noelle led the field effort, data management, and detection study for the first half of the summer and Emily continued field surveys and data analysis through September. The QTAP field effort was also supported by the Youth Conservation Corps (YCC) and by high school student, Auden. These students took part in field surveys and observed the morphometric data collection process.</p>
+<p>The QTAP team finished the survey season with 229 surveys and a total of 114 live captures through search and 12 live captures during the detection study. 86 were unique individuals, and 41 were new captures. Table 1, table 2, and figures 2-4 summarize yearly and total captures, capture locations, and individual turtle movements between 2019 and 2022.</p>
+</div>
+<div id="notable-events" class="section level3">
+<h3><strong>Notable Events</strong></h3>
+<p>In 2017, a transmitter was attached to the carapace of turtle 220 for tracking via telemetry. However, at some point after attachment, this transmitter lost function. Turtle 220 was recaptured in 2020 before the field team knew of the transmitter’s loss of function. Over the last two years, an effort was made to search for turtle 220 and remove the failed transmitter, but she could not be found. On September 12, 2022, turtle 220 was relocated during a search in the cabin detection plot. She was brought to the main office for transmitter removal and Glenn, a wildlife veterinarian on site, was ultimately successful in prying off the transmitter. Turtle 220 was returned to the location she was found in the cabin plot.</p>
+<center>
+<div class="figure">
+<div id="htmlwidget-fb28b543d5a76d6f527b" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-fb28b543d5a76d6f527b">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["Esri.WorldImagery",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircleMarkers","args":[[39.048016,39.048019,39.047981,39.048038,null,39.048042,39.048061,39.048103,39.048172,null,39.048302,null,39.048035,39.048161,39.048023,39.048042,39.048012,39.048069,39.048012,39.048023,39.048119,39.048069,39.048092,39.048176,null,39.047977,39.048115,39.048103,39.048672,39.048103,null,39.04808,null,39.048141,39.048065,39.048019,39.048073,null,null,39.048084,39.047703,39.048038,39.048084,39.04813,39.04818,39.048019,39.04805,39.048016,null,39.047905,39.048149,39.047871,39.047905,39.047966,39.047977,null,39.048092,39.048012,39.047916,39.047905,39.047752,39.047707,39.047783,39.047741,39.04771,39.047604,39.047707,39.047668,39.047722,39.047787,39.047947,39.047958,39.048019,39.047939,39.048019,39.047997,39.047981,39.048019,39.047943,39.048084,39.047997,39.047985,39.048061,39.047798,39.047737,39.047688,39.047646,39.047611,39.047672,39.047695,39.047653,39.047642,39.04763,39.047676,39.047668,39.047653,39.047626,39.047668,39.047638,39.047699,39.047691,39.047703,39.047829,39.047871,39.048058,39.048176,39.048214,39.048115,39.048115,39.048115,39.048183,39.04813,39.048172,39.048103,null,null,39.049358],[-76.805573,-76.805542,-76.805618,-76.805504,null,-76.805565,-76.805489,-76.805473,-76.805466,null,-76.805428,null,-76.80545,-76.805603,-76.805618,-76.805664,-76.805519,-76.805542,-76.805542,-76.805603,-76.805519,-76.805458,-76.805496,-76.805443,null,-76.805435,-76.805481,-76.80545,-76.805519,-76.805473,null,-76.805504,null,-76.805405,-76.805443,-76.805496,-76.80555,null,null,-76.805496,-76.80555,-76.805489,-76.805359,-76.805382,-76.805283,-76.805275,-76.805183,-76.805328,null,-76.805435,-76.805328,-76.805397,-76.805557,-76.80542,-76.805397,null,-76.805542,-76.80555,-76.805397,-76.805412,-76.805664,-76.80555,-76.805649,-76.805649,-76.805519,-76.805466,-76.805496,-76.805473,-76.805634,-76.805527,-76.805405,-76.805328,-76.805519,-76.80545,-76.805542,-76.805557,-76.805412,-76.805382,-76.805634,-76.805679,-76.805481,-76.80529,-76.805679,-76.805534,-76.805542,-76.805496,-76.805473,-76.805489,-76.805443,-76.805557,-76.805473,-76.805466,-76.805473,-76.805519,-76.805504,-76.805511,-76.805511,-76.805504,-76.805542,-76.805557,-76.805588,-76.805588,-76.80584,-76.805847,-76.806129,-76.806122,-76.806068,-76.806068,-76.806068,-76.806061,-76.806145,-76.806061,-76.806305,-76.806656,null,null,-76.804832],2,null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":5,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.2},null,null,["Date:<br/>2017-07-21","Date:<br/>2017-07-21","Date:<br/>2017-07-20","Date:<br/>2017-07-20","Date:<br/>2017-07-19","Date:<br/>2017-07-19","Date:<br/>2017-07-18","Date:<br/>2017-07-18","Date:<br/>2017-07-17","Date:<br/>2017-07-17","Date:<br/>2017-07-16","Date:<br/>2017-07-16","Date:<br/>2017-07-15","Date:<br/>2017-07-15","Date:<br/>2017-07-14","Date:<br/>2017-07-14","Date:<br/>2017-07-13","Date:<br/>2017-07-13","Date:<br/>2017-07-12","Date:<br/>2017-07-12","Date:<br/>2017-07-11","Date:<br/>2017-07-11","Date:<br/>2017-07-10","Date:<br/>2017-07-10","Date:<br/>2017-07-09","Date:<br/>2017-07-09","Date:<br/>2017-07-08","Date:<br/>2017-07-08","Date:<br/>2017-07-07","Date:<br/>2017-07-07","Date:<br/>2017-07-06","Date:<br/>2017-07-06","Date:<br/>2017-07-05","Date:<br/>2017-07-05","Date:<br/>2017-07-04","Date:<br/>2017-07-03","Date:<br/>2017-07-03","Date:<br/>2017-07-02","Date:<br/>2017-07-02","Date:<br/>2017-07-01","Date:<br/>2017-07-01","Date:<br/>2017-06-30","Date:<br/>2017-06-30","Date:<br/>2017-06-29","Date:<br/>2017-06-29","Date:<br/>2017-06-29","Date:<br/>2017-06-28","Date:<br/>2017-06-28","Date:<br/>2017-06-27","Date:<br/>2017-06-27","Date:<br/>2017-06-26","Date:<br/>2017-06-26","Date:<br/>2017-06-25","Date:<br/>2017-06-25","Date:<br/>2017-06-24","Date:<br/>2017-06-24","Date:<br/>2017-06-23","Date:<br/>2017-06-23","Date:<br/>2017-06-22","Date:<br/>2017-06-22","Date:<br/>2017-06-21","Date:<br/>2017-06-21","Date:<br/>2017-06-20","Date:<br/>2017-06-20","Date:<br/>2017-06-19","Date:<br/>2017-06-19","Date:<br/>2017-06-19","Date:<br/>2017-06-19","Date:<br/>2017-06-18","Date:<br/>2017-06-18","Date:<br/>2017-06-17","Date:<br/>2017-06-17","Date:<br/>2017-06-16","Date:<br/>2017-06-16","Date:<br/>2017-06-15","Date:<br/>2017-06-15","Date:<br/>2017-06-14","Date:<br/>2017-06-14","Date:<br/>2017-06-13","Date:<br/>2017-06-13","Date:<br/>2017-06-12","Date:<br/>2017-06-12","Date:<br/>2017-06-11","Date:<br/>2017-06-11","Date:<br/>2017-06-10","Date:<br/>2017-06-10","Date:<br/>2017-06-09","Date:<br/>2017-06-09","Date:<br/>2017-06-08","Date:<br/>2017-06-08","Date:<br/>2017-06-07","Date:<br/>2017-06-07","Date:<br/>2017-06-06","Date:<br/>2017-06-06","Date:<br/>2017-06-05","Date:<br/>2017-06-05","Date:<br/>2017-06-04","Date:<br/>2017-06-04","Date:<br/>2017-06-03","Date:<br/>2017-06-03","Date:<br/>2017-06-02","Date:<br/>2017-06-02","Date:<br/>2017-06-01","Date:<br/>2017-06-01","Date:<br/>2017-05-31","Date:<br/>2017-05-31","Date:<br/>2017-05-31","Date:<br/>2017-05-31","Date:<br/>2017-05-30","Date:<br/>2017-05-30","Date:<br/>2017-05-29","Date:<br/>2017-05-29","Date:<br/>2017-05-28","Date:<br/>2017-05-28","Date:<br/>2017-05-27","Date:<br/>2017-05-27","Date:<br/>2017-05-26"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addCircleMarkers","args":[[39.0519753,39.04808],[-76.8054107,-76.806433],2,null,null,{"interactive":true,"className":"","stroke":true,"color":"yellow","weight":5,"opacity":0.5,"fill":true,"fillColor":"yellow","fillOpacity":0.2},null,null,["Date:<br/>2020-07-09","Date:<br/>2022-09-12"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[39.047604,39.0519753],"lng":[-76.806656,-76.804832]}},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+<strong>Figure 2:</strong> Interactive map of turtle 220 locations before transmitter failure (red) and 2020 and 2022 recapture locations (yellow).
+</p>
+</div>
+</center>
+<center>
+<img src="Report2-andy_files/figure-html/unnamed-chunk-12-1.png" width="1104" />
+</center>
+</div>
+<div id="citizen-science" class="section level3">
+<h3><strong>Citizen Science</strong></h3>
+<p>For the past four years, QTAP has requested community science reports of eastern box turtles found on EESC or the public refuge. Reporters are asked to provide GPS coordinates of location, photographs, date, and time. We received 122 community science reports this year, 20 of which were notched turtles with confirmed identities. Citizen sighting were reported from North, Central, and South tracts of the refuge by both citizens and refuge staff members. These reports are useful for studying eastern box turtle presence and movements in refuge areas outside standard survey plots and will be used in capture-recapture analysis for refuge population estimates.</p>
+<center>
+<table style="width:30%; margin-left: auto; margin-right: auto;" class="table table-striped">
+<caption>
+<strong>Table 1:</strong> Top five citizen science contributors in 2022
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;">
+Contributor
+</th>
+<th style="text-align:center;">
+Submissions
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+Russell Rozell
+</td>
+<td style="text-align:center;">
+35
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Greg Crites
+</td>
+<td style="text-align:center;">
+11
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Sandy Spencer
+</td>
+<td style="text-align:center;">
+9
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Mikey Lutmerding
+</td>
+<td style="text-align:center;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+Marcus Kanik
+</td>
+<td style="text-align:center;">
+5
+</td>
+</tr>
+</tbody>
+</table>
+<center>
+<div class="figure">
+<div id="htmlwidget-d90a17e87cb099a0d7b6" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d90a17e87cb099a0d7b6">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["Esri.WorldImagery",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircleMarkers","args":[[39.057141,39.0535938,39.04986,39.0491488,39.05614,39.050334,39.0607677,39.0539377952343,39.04968,39.0484564527837,39.07759,39.079893,39.088355,39.04617,39.03903,39.0501981,39.0543325,39.067695,39.07257,39.0711264,39.075772,39.049645,39.050484,39.0363334,39.06902,39.08755,39.0824601,39.053732,39.0549951,39.0549951,39.053013,39.052225,39.035,39.03756,39.049788,39.061194,39.033133,39.067609,39.0543156666667,39.0543043333333,39.0544306666667,39.053968,39.0814935,39.0612795,39.0568001,39.086736,39.074056,39.048067,39.045533,39.066831,39.08227,39.049827,39.0477126,39.05651,39.0545684,39.054405,39.0549001,39.0306054,39.059879,39.077816,39.0532241,39.05372,39.082338,39.0539,39.04916,39.0532241,39.052468,39.03564,39.055888,39.058165,39.088108,39.054983,39.0612972,39.054205,39.033,39.0359418,39.0521918,39.075727,39.03254,39.07479444,39.058399,39.071273,39.026355,39.037306,39.03,39.033583,39.0506455,39.074997,39.0494563,39.0802633,39.0433687,39.042882,39.048413,39.0806019,39.0509003,39.056732,39.076042,39.050813,39.086127,39.08726,39.0605296666667,39.0531,39.05198,39.078434,39.083694,39.04952,39.086254,39.065673,39.083266,39.035833,39.053194,39.037015,39.054458,39.056476,39.03463,39.042486,39.061018,39.070294,39.049664,39.0487,39.051508,39.054,39.064843,39.055435,39.042838,39.052696,39.051486,39.087585,39.080719,39.0881702,39.049724,39.0543278,39.046941,39.0533778,39.077629,39.0541703,39.0567276666667,39.0674559,39.085004,39.075036,39.054681,39.054403,39.032227,39.06964,39.0527233333333,39.043826,39.0538899,39.053871,39.026282,39.0588,39.059199,39.047063,39.0731,39.0311,39.048757,39.077385,39.049608,39.05388889,39.06882,39.06454,39.0361,39.054299,39.02305556,39.02944444,39.035235,39.068008,39.053498,39.02611111,39.04725,39.050586,39.0529,39.02982,39.07505,39.05444444,39.0486338,39.070973,39.070973,39.0498,39.0492,39.036717,39.062418,39.0580753,39.076974,39.02917,39.03611111,39.02644,39.08694444,39.05328,39.074548,39.089135,39.077,39.050237,39.05396762,39.054677,39.078524,39.0428187,39.026,39.04472,39.04349,39.04796,39.0604,39.03,39.0525,39.0108463,39.0143507,39.054434,39.0674025,39.05138889,39.0722946,39.0846,39.0830194,39.04443,39.0500433,39.0537,39.08455,39.0519798,39.05185,39.077],[-76.815941,-76.820785,-76.81808,-76.7989159,-76.8237806,-76.788122,-76.8123159,-76.8152177112271,-76.807965,-76.8048488684534,-76.77485,-76.768603,-76.80153,-76.76904,-76.75968,-76.8185208,-76.8173289,-76.778346,-76.80574,-76.8038642,-76.773805,-76.77479,-76.8099475,-76.7889706,-76.79859,-76.7722,-76.7725008,-76.814815,-76.8235711,-76.8235711,-76.81778,-76.803677,-76.815,-76.779159,-76.817716,-76.811978,-76.8143619,-76.814304,-76.8175833333333,-76.81761,-76.8220256666667,-76.818152,-76.7824971,-76.7330301,-76.7797227,-76.772265,-76.775182,-76.745223,-76.768389,-76.778851,-76.762111,-76.808127,-76.8164797,-76.81665,-76.8237528,-76.819812,-76.8239862,-76.7817333,-76.781599,-76.766433,-76.8210378,-76.820675,-76.761988,-76.818143,-76.80673,-76.8210378,-76.791652,-76.80438,-76.820665,-76.81514,-76.771824,-76.784365,-76.8097133,-76.77929,-76.813,-76.7888774,-76.7770921,-76.794356,-76.80821,-76.82222222,-76.814951,-76.804196,-76.816134,-76.789446,-76.808,-76.814263,-76.819405,-76.779895,-76.8083851,-76.7818356,-76.7843827,-76.7836276,-76.789326,-76.7667515,-76.8195525,-76.821484,-76.769643,-76.819754,-76.772166,-76.80154,-76.803377,-76.81807,-76.81042,-76.765603,-76.746932,-76.774761,-76.733387,-76.80592,-76.759379,-76.789525,-76.802104,-76.789454,-76.779581,-76.780466,-76.80463,-76.820882,-76.809548,-76.776975,-76.77595,-76.8167,-76.820466,-76.82,-76.730917,-76.818294,-76.816214,-76.777841,-76.820373,-76.774901,-76.764739,-76.8068438,-76.774855,-76.8220389,-76.770312,-76.8185757,-76.77075,-76.8155419,-76.8164833333333,-76.7781258,-76.772152,-76.774463,-76.821901,-76.817298,-76.773127,-76.77744,-76.8209266666666,-76.748729,-76.8203716,-76.820078,-76.799778,-76.8125,-76.814705,-76.779508,-76.7823,-76.8087,-76.806457,-76.772181,-76.817573,-76.81944444,-76.78551,-76.76733,-76.8218,-76.77934,-76.80361111,-76.7975,-76.8142125,-76.778181,-76.8186734,-76.79916667,-76.802266,-76.819362,-76.801,-76.807334,-76.81918,-76.82361111,-76.8045147,-76.776395,-76.776395,-76.8043,-76.8044,-76.818218,-76.7664669,-76.7620992,-76.773427,-76.80583,-76.80611111,-76.80211,-76.77472222,-76.82095,-76.791665,-76.799638,-76.772,-76.799446,-76.81994794,-76.823999,-76.79125,-76.7433469,-76.772,-76.76675,-76.75983,-76.77353,-76.8139,-76.77944444,-76.80361111,-76.80825,-76.8038582,-76.82009,-76.778852,-76.82027778,-76.7481776,-76.74656,-76.7609871,-76.76537,-76.7749494,-76.771,-76.765321,-76.8206589,-76.8208,-76.772],2,null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":5,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.2},null,null,["Turtle #:<br/>2<br/> <br/>Year:<br/>2022","Turtle #:<br/>3<br/> <br/>Year:<br/>2022","Turtle #:<br/>4<br/> <br/>Year:<br/>2022","Turtle #:<br/>5<br/> <br/>Year:<br/>2022","Turtle #:<br/>6<br/> <br/>Year:<br/>2022","Turtle #:<br/>7<br/> <br/>Year:<br/>2022","Turtle #:<br/>8<br/> <br/>Year:<br/>2022","Turtle #:<br/>9<br/> <br/>Year:<br/>2022","Turtle #:<br/>10<br/> <br/>Year:<br/>2022","Turtle #:<br/>11<br/> <br/>Year:<br/>2022","Turtle #:<br/>12<br/> <br/>Year:<br/>2022","Turtle #:<br/>16<br/> <br/>Year:<br/>2022","Turtle #:<br/>17<br/> <br/>Year:<br/>2022","Turtle #:<br/>19<br/> <br/>Year:<br/>2022","Turtle #:<br/>20<br/> <br/>Year:<br/>2022","Turtle #:<br/>21<br/> <br/>Year:<br/>2022","Turtle #:<br/>22<br/> <br/>Year:<br/>2022","Turtle #:<br/>23<br/> <br/>Year:<br/>2022","Turtle #:<br/>24<br/> <br/>Year:<br/>2022","Turtle #:<br/>25<br/> <br/>Year:<br/>2022","Turtle #:<br/>27<br/> <br/>Year:<br/>2022","Turtle #:<br/>28<br/> <br/>Year:<br/>2022","Turtle #:<br/>29<br/> <br/>Year:<br/>2022","Turtle #:<br/>30<br/> <br/>Year:<br/>2022","Turtle #:<br/>31<br/> <br/>Year:<br/>2022","Turtle #:<br/>32<br/> <br/>Year:<br/>2022","Turtle #:<br/>34<br/> <br/>Year:<br/>2022","Turtle #:<br/>35<br/> <br/>Year:<br/>2022","Turtle #:<br/>36<br/> <br/>Year:<br/>2022","Turtle #:<br/>37<br/> <br/>Year:<br/>2022","Turtle #:<br/>39<br/> <br/>Year:<br/>2022","Turtle #:<br/>40<br/> <br/>Year:<br/>2022","Turtle #:<br/>41<br/> <br/>Year:<br/>2022","Turtle #:<br/>44<br/> <br/>Year:<br/>2022","Turtle #:<br/>45<br/> <br/>Year:<br/>2022","Turtle #:<br/>46<br/> <br/>Year:<br/>2022","Turtle #:<br/>53<br/> <br/>Year:<br/>2022","Turtle #:<br/>54<br/> <br/>Year:<br/>2022","Turtle #:<br/>55<br/> <br/>Year:<br/>2022","Turtle #:<br/>56<br/> <br/>Year:<br/>2022","Turtle #:<br/>57<br/> <br/>Year:<br/>2022","Turtle #:<br/>58<br/> <br/>Year:<br/>2022","Turtle #:<br/>60<br/> <br/>Year:<br/>2022","Turtle #:<br/>62<br/> <br/>Year:<br/>2022","Turtle #:<br/>63<br/> <br/>Year:<br/>2022","Turtle #:<br/>66<br/> <br/>Year:<br/>2022","Turtle #:<br/>67<br/> <br/>Year:<br/>2022","Turtle #:<br/>68<br/> <br/>Year:<br/>2022","Turtle #:<br/>69<br/> <br/>Year:<br/>2022","Turtle #:<br/>70<br/> <br/>Year:<br/>2022","Turtle #:<br/>71<br/> <br/>Year:<br/>2022","Turtle #:<br/>72<br/> <br/>Year:<br/>2022","Turtle #:<br/>77<br/> <br/>Year:<br/>2022","Turtle #:<br/>79<br/> <br/>Year:<br/>2022","Turtle #:<br/>83<br/> <br/>Year:<br/>2022","Turtle #:<br/>84<br/> <br/>Year:<br/>2022","Turtle #:<br/>86<br/> <br/>Year:<br/>2022","Turtle #:<br/>88<br/> <br/>Year:<br/>2022","Turtle #:<br/>91<br/> <br/>Year:<br/>2022","Turtle #:<br/>92<br/> <br/>Year:<br/>2022","Turtle #:<br/>93<br/> <br/>Year:<br/>2022","Turtle #:<br/>98<br/> <br/>Year:<br/>2022","Turtle #:<br/>101<br/> <br/>Year:<br/>2022","Turtle #:<br/>103<br/> <br/>Year:<br/>2022","Turtle #:<br/>108<br/> <br/>Year:<br/>2022","Turtle #:<br/>110<br/> <br/>Year:<br/>2022","Turtle #:<br/>112<br/> <br/>Year:<br/>2022","Turtle #:<br/>113<br/> <br/>Year:<br/>2022","Turtle #:<br/>1<br/> <br/>Year:<br/>2020","Turtle #:<br/>3<br/> <br/>Year:<br/>2020","Turtle #:<br/>4<br/> <br/>Year:<br/>2020","Turtle #:<br/>5<br/> <br/>Year:<br/>2020","Turtle #:<br/>6<br/> <br/>Year:<br/>2020","Turtle #:<br/>15<br/> <br/>Year:<br/>2020","Turtle #:<br/>16<br/> <br/>Year:<br/>2020","Turtle #:<br/>17<br/> <br/>Year:<br/>2020","Turtle #:<br/>18<br/> <br/>Year:<br/>2020","Turtle #:<br/>19<br/> <br/>Year:<br/>2020","Turtle #:<br/>20<br/> <br/>Year:<br/>2020","Turtle #:<br/>21<br/> <br/>Year:<br/>2020","Turtle #:<br/>24<br/> <br/>Year:<br/>2020","Turtle #:<br/>25<br/> <br/>Year:<br/>2020","Turtle #:<br/>26<br/> <br/>Year:<br/>2020","Turtle #:<br/>27<br/> <br/>Year:<br/>2020","Turtle #:<br/>28<br/> <br/>Year:<br/>2020","Turtle #:<br/>29<br/> <br/>Year:<br/>2020","Turtle #:<br/>30<br/> <br/>Year:<br/>2020","Turtle #:<br/>32<br/> <br/>Year:<br/>2020","Turtle #:<br/>36<br/> <br/>Year:<br/>2020","Turtle #:<br/>37<br/> <br/>Year:<br/>2020","Turtle #:<br/>38<br/> <br/>Year:<br/>2020","Turtle #:<br/>39<br/> <br/>Year:<br/>2020","Turtle #:<br/>41<br/> <br/>Year:<br/>2020","Turtle #:<br/>42<br/> <br/>Year:<br/>2020","Turtle #:<br/>44<br/> <br/>Year:<br/>2020","Turtle #:<br/>46<br/> <br/>Year:<br/>2020","Turtle #:<br/>2<br/> <br/>Year:<br/>2021","Turtle #:<br/>3<br/> <br/>Year:<br/>2021","Turtle #:<br/>4<br/> <br/>Year:<br/>2021","Turtle #:<br/>5<br/> <br/>Year:<br/>2021","Turtle #:<br/>6<br/> <br/>Year:<br/>2021","Turtle #:<br/>7<br/> <br/>Year:<br/>2021","Turtle #:<br/>8<br/> <br/>Year:<br/>2021","Turtle #:<br/>9<br/> <br/>Year:<br/>2021","Turtle #:<br/>12<br/> <br/>Year:<br/>2021","Turtle #:<br/>13<br/> <br/>Year:<br/>2021","Turtle #:<br/>15<br/> <br/>Year:<br/>2021","Turtle #:<br/>16<br/> <br/>Year:<br/>2021","Turtle #:<br/>17<br/> <br/>Year:<br/>2021","Turtle #:<br/>18<br/> <br/>Year:<br/>2021","Turtle #:<br/>19<br/> <br/>Year:<br/>2021","Turtle #:<br/>20<br/> <br/>Year:<br/>2021","Turtle #:<br/>21<br/> <br/>Year:<br/>2021","Turtle #:<br/>23<br/> <br/>Year:<br/>2021","Turtle #:<br/>24<br/> <br/>Year:<br/>2021","Turtle #:<br/>25<br/> <br/>Year:<br/>2021","Turtle #:<br/>26<br/> <br/>Year:<br/>2021","Turtle #:<br/>27<br/> <br/>Year:<br/>2021","Turtle #:<br/>28<br/> <br/>Year:<br/>2021","Turtle #:<br/>29<br/> <br/>Year:<br/>2021","Turtle #:<br/>30<br/> <br/>Year:<br/>2021","Turtle #:<br/>31<br/> <br/>Year:<br/>2021","Turtle #:<br/>32<br/> <br/>Year:<br/>2021","Turtle #:<br/>33<br/> <br/>Year:<br/>2021","Turtle #:<br/>36<br/> <br/>Year:<br/>2021","Turtle #:<br/>37<br/> <br/>Year:<br/>2021","Turtle #:<br/>38<br/> <br/>Year:<br/>2021","Turtle #:<br/>39<br/> <br/>Year:<br/>2021","Turtle #:<br/>40<br/> <br/>Year:<br/>2021","Turtle #:<br/>41<br/> <br/>Year:<br/>2021","Turtle #:<br/>42<br/> <br/>Year:<br/>2021","Turtle #:<br/>44<br/> <br/>Year:<br/>2021","Turtle #:<br/>45<br/> <br/>Year:<br/>2021","Turtle #:<br/>46<br/> <br/>Year:<br/>2021","Turtle #:<br/>47<br/> <br/>Year:<br/>2021","Turtle #:<br/>48<br/> <br/>Year:<br/>2021","Turtle #:<br/>52<br/> <br/>Year:<br/>2021","Turtle #:<br/>53<br/> <br/>Year:<br/>2021","Turtle #:<br/>54<br/> <br/>Year:<br/>2021","Turtle #:<br/>55<br/> <br/>Year:<br/>2021","Turtle #:<br/>56<br/> <br/>Year:<br/>2021","Turtle #:<br/>57<br/> <br/>Year:<br/>2021","Turtle #:<br/>58<br/> <br/>Year:<br/>2021","Turtle #:<br/>60<br/> <br/>Year:<br/>2021","Turtle #:<br/>61<br/> <br/>Year:<br/>2021","Turtle #:<br/>65<br/> <br/>Year:<br/>2021","Turtle #:<br/>67<br/> <br/>Year:<br/>2021","Turtle #:<br/>68<br/> <br/>Year:<br/>2021","Turtle #:<br/>1<br/> <br/>Year:<br/>2019","Turtle #:<br/>2<br/> <br/>Year:<br/>2019","Turtle #:<br/>3<br/> <br/>Year:<br/>2019","Turtle #:<br/>4<br/> <br/>Year:<br/>2019","Turtle #:<br/>5<br/> <br/>Year:<br/>2019","Turtle #:<br/>6<br/> <br/>Year:<br/>2019","Turtle #:<br/>7<br/> <br/>Year:<br/>2019","Turtle #:<br/>8<br/> <br/>Year:<br/>2019","Turtle #:<br/>9<br/> <br/>Year:<br/>2019","Turtle #:<br/>10<br/> <br/>Year:<br/>2019","Turtle #:<br/>11<br/> <br/>Year:<br/>2019","Turtle #:<br/>12<br/> <br/>Year:<br/>2019","Turtle #:<br/>13<br/> <br/>Year:<br/>2019","Turtle #:<br/>14<br/> <br/>Year:<br/>2019","Turtle #:<br/>15<br/> <br/>Year:<br/>2019","Turtle #:<br/>16<br/> <br/>Year:<br/>2019","Turtle #:<br/>17<br/> <br/>Year:<br/>2019","Turtle #:<br/>18<br/> <br/>Year:<br/>2019","Turtle #:<br/>19<br/> <br/>Year:<br/>2019","Turtle #:<br/>20<br/> <br/>Year:<br/>2019","Turtle #:<br/>21<br/> <br/>Year:<br/>2019","Turtle #:<br/>22<br/> <br/>Year:<br/>2019","Turtle #:<br/>23<br/> <br/>Year:<br/>2019","Turtle #:<br/>24<br/> <br/>Year:<br/>2019","Turtle #:<br/>25<br/> <br/>Year:<br/>2019","Turtle #:<br/>27<br/> <br/>Year:<br/>2019","Turtle #:<br/>28<br/> <br/>Year:<br/>2019","Turtle #:<br/>29<br/> <br/>Year:<br/>2019","Turtle #:<br/>30<br/> <br/>Year:<br/>2019","Turtle #:<br/>31<br/> <br/>Year:<br/>2019","Turtle #:<br/>32<br/> <br/>Year:<br/>2019","Turtle #:<br/>33<br/> <br/>Year:<br/>2019","Turtle #:<br/>35<br/> <br/>Year:<br/>2019","Turtle #:<br/>36<br/> <br/>Year:<br/>2019","Turtle #:<br/>37<br/> <br/>Year:<br/>2019","Turtle #:<br/>38<br/> <br/>Year:<br/>2019","Turtle #:<br/>39<br/> <br/>Year:<br/>2019","Turtle #:<br/>40<br/> <br/>Year:<br/>2019","Turtle #:<br/>41<br/> <br/>Year:<br/>2019","Turtle #:<br/>44<br/> <br/>Year:<br/>2019","Turtle #:<br/>45<br/> <br/>Year:<br/>2019","Turtle #:<br/>46<br/> <br/>Year:<br/>2019","Turtle #:<br/>47<br/> <br/>Year:<br/>2019","Turtle #:<br/>48<br/> <br/>Year:<br/>2019","Turtle #:<br/>49<br/> <br/>Year:<br/>2019","Turtle #:<br/>50<br/> <br/>Year:<br/>2019","Turtle #:<br/>51<br/> <br/>Year:<br/>2019","Turtle #:<br/>53<br/> <br/>Year:<br/>2019","Turtle #:<br/>54<br/> <br/>Year:<br/>2019","Turtle #:<br/>55<br/> <br/>Year:<br/>2019","Turtle #:<br/>56<br/> <br/>Year:<br/>2019","Turtle #:<br/>57<br/> <br/>Year:<br/>2019","Turtle #:<br/>58<br/> <br/>Year:<br/>2019","Turtle #:<br/>59<br/> <br/>Year:<br/>2019","Turtle #:<br/>60<br/> <br/>Year:<br/>2019","Turtle #:<br/>62<br/> <br/>Year:<br/>2019","Turtle #:<br/>63<br/> <br/>Year:<br/>2019","Turtle #:<br/>66<br/> <br/>Year:<br/>2019","Turtle #:<br/>67<br/> <br/>Year:<br/>2019","Turtle #:<br/>68<br/> <br/>Year:<br/>2019","Turtle #:<br/>69<br/> <br/>Year:<br/>2019","Turtle #:<br/>70<br/> <br/>Year:<br/>2019","Turtle #:<br/>72<br/> <br/>Year:<br/>2019","Turtle #:<br/>76<br/> <br/>Year:<br/>2019","Turtle #:<br/>77<br/> <br/>Year:<br/>2019","Turtle #:<br/>78<br/> <br/>Year:<br/>2019","Turtle #:<br/>79<br/> <br/>Year:<br/>2019","Turtle #:<br/>80<br/> <br/>Year:<br/>2019","Turtle #:<br/>81<br/> <br/>Year:<br/>2019","Turtle #:<br/>82<br/> <br/>Year:<br/>NA"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addCircleMarkers","args":[[39.0872222222222,39.0876194444444,39.0885944444444,39.0766,39.068475,39.0474611111111,39.0510555555556,39.0492194444444,39.0543944444444,39.0704638888889,39.0742222222222,39.05,39.0333333333333,39.05,39.05,39.05,39.0333333333333,39.0833333333333,39.0666666666667,39.0333333333333,39.05,39.0666666666667,39.0333333333333,39.0333333333333,39.05,39.0333333333333,39.0166666666667,39.05,39.0333333333333,39.0666666666667,39.0333333333333,39.0333333333333,39.0666666666667,39.0166666666667,39.05,39.05,39.0666666666667,39.0666666666667,39.0666666666667,39.0666666666667,39.0666666666667,39.0333333333333,39.0333333333333,39.05,39.0666666666667,39.0666666666667,39.0666666666667,39.0486111111111,39.0483333333333,39.0513888888889,39.0555555555556,39.0527777777778,39.033,39.0558333333333,39.0536111111111,39.03,39.034,39.037,39.0294444444444,39.0336111111111,39.0338888888889,39.082775,39.0362555555556,39.0348861111111,39.0502777777778,39.0538888888889,39.0483333333333,39.0552777777778,39.0555555555556,39.0538888888889,39.0538888888889],[-76.7730555555556,-76.8029472222222,-76.8055888888889,-76.8172555555556,-76.77735,-76.7725472222222,-76.8104916666667,-76.7741833333333,-76.7790777777778,-76.7768888888889,-76.7789444444444,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.75,-76.75,-76.7666666666667,-76.7666666666667,-76.8,-76.7166666666667,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.8166666666667,-76.7666666666667,-76.8,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.7666666666667,-76.75,-76.7666666666667,-76.7666666666667,-76.75,-76.7666666666667,-76.75,-76.7333333333333,-76.75,-76.8044444444444,-76.805,-76.8108333333333,-76.8183333333333,-76.8208333333333,-76.813,-76.8197222222222,-76.8166666666667,-76.808,-76.814,-76.82,-76.8025,-76.8138888888889,-76.8158333333333,-76.750375,-76.8056416666667,-76.8165972222222,-76.8186111111111,-76.8197222222222,-76.8055555555556,-76.8175,-76.8186111111111,-76.8191666666667,-76.8205555555556],2,null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":5,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.2},null,null,["Turtle #:<br/>1<br/> <br/>Year:<br/>2022","Turtle #:<br/>13<br/> <br/>Year:<br/>2022","Turtle #:<br/>14<br/> <br/>Year:<br/>2022","Turtle #:<br/>15<br/> <br/>Year:<br/>2022","Turtle #:<br/>18<br/> <br/>Year:<br/>2022","Turtle #:<br/>26<br/> <br/>Year:<br/>2022","Turtle #:<br/>33<br/> <br/>Year:<br/>2022","Turtle #:<br/>42<br/> <br/>Year:<br/>2022","Turtle #:<br/>47<br/> <br/>Year:<br/>2022","Turtle #:<br/>48<br/> <br/>Year:<br/>2022","Turtle #:<br/>49<br/> <br/>Year:<br/>2022","Turtle #:<br/>52<br/> <br/>Year:<br/>2022","Turtle #:<br/>59<br/> <br/>Year:<br/>2022","Turtle #:<br/>61<br/> <br/>Year:<br/>2022","Turtle #:<br/>64<br/> <br/>Year:<br/>2022","Turtle #:<br/>65<br/> <br/>Year:<br/>2022","Turtle #:<br/>73<br/> <br/>Year:<br/>2022","Turtle #:<br/>74<br/> <br/>Year:<br/>2022","Turtle #:<br/>75<br/> <br/>Year:<br/>2022","Turtle #:<br/>76<br/> <br/>Year:<br/>2022","Turtle #:<br/>78<br/> <br/>Year:<br/>2022","Turtle #:<br/>80<br/> <br/>Year:<br/>2022","Turtle #:<br/>81<br/> <br/>Year:<br/>2022","Turtle #:<br/>82<br/> <br/>Year:<br/>2022","Turtle #:<br/>85<br/> <br/>Year:<br/>2022","Turtle #:<br/>87<br/> <br/>Year:<br/>2022","Turtle #:<br/>89<br/> <br/>Year:<br/>2022","Turtle #:<br/>90<br/> <br/>Year:<br/>2022","Turtle #:<br/>94<br/> <br/>Year:<br/>2022","Turtle #:<br/>95<br/> <br/>Year:<br/>2022","Turtle #:<br/>96<br/> <br/>Year:<br/>2022","Turtle #:<br/>97<br/> <br/>Year:<br/>2022","Turtle #:<br/>99<br/> <br/>Year:<br/>2022","Turtle #:<br/>100<br/> <br/>Year:<br/>2022","Turtle #:<br/>102<br/> <br/>Year:<br/>2022","Turtle #:<br/>107<br/> <br/>Year:<br/>2022","Turtle #:<br/>109<br/> <br/>Year:<br/>2022","Turtle #:<br/>111<br/> <br/>Year:<br/>2022","Turtle #:<br/>114<br/> <br/>Year:<br/>2022","Turtle #:<br/>115<br/> <br/>Year:<br/>2022","Turtle #:<br/>116<br/> <br/>Year:<br/>2022","Turtle #:<br/>117<br/> <br/>Year:<br/>2022","Turtle #:<br/>118<br/> <br/>Year:<br/>2022","Turtle #:<br/>119<br/> <br/>Year:<br/>2022","Turtle #:<br/>120<br/> <br/>Year:<br/>2022","Turtle #:<br/>121<br/> <br/>Year:<br/>2022","Turtle #:<br/>122<br/> <br/>Year:<br/>2022","Turtle #:<br/>10<br/> <br/>Year:<br/>2020","Turtle #:<br/>11<br/> <br/>Year:<br/>2020","Turtle #:<br/>12<br/> <br/>Year:<br/>2020","Turtle #:<br/>13<br/> <br/>Year:<br/>2020","Turtle #:<br/>14<br/> <br/>Year:<br/>2020","Turtle #:<br/>16<br/> <br/>Year:<br/>2020","Turtle #:<br/>22<br/> <br/>Year:<br/>2020","Turtle #:<br/>23<br/> <br/>Year:<br/>2020","Turtle #:<br/>28<br/> <br/>Year:<br/>2020","Turtle #:<br/>29<br/> <br/>Year:<br/>2020","Turtle #:<br/>31<br/> <br/>Year:<br/>2020","Turtle #:<br/>40<br/> <br/>Year:<br/>2020","Turtle #:<br/>10<br/> <br/>Year:<br/>2021","Turtle #:<br/>14<br/> <br/>Year:<br/>2021","Turtle #:<br/>22<br/> <br/>Year:<br/>2021","Turtle #:<br/>34<br/> <br/>Year:<br/>2021","Turtle #:<br/>35<br/> <br/>Year:<br/>2021","Turtle #:<br/>49<br/> <br/>Year:<br/>2021","Turtle #:<br/>50<br/> <br/>Year:<br/>2021","Turtle #:<br/>51<br/> <br/>Year:<br/>2021","Turtle #:<br/>59<br/> <br/>Year:<br/>2021","Turtle #:<br/>62<br/> <br/>Year:<br/>2021","Turtle #:<br/>63<br/> <br/>Year:<br/>2021","Turtle #:<br/>64<br/> <br/>Year:<br/>2021"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[39.0108463,39.089135],"lng":[-76.823999,-76.7166666666667]}},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+<strong>Figure 3:</strong> Interactive map of citizen science turtle sightings for 2019-2022
+</p>
+</div>
+</center>
+</div>
+<div id="detection-study" class="section level3">
+<h3><strong>Detection Study</strong></h3>
+<p>The detection study was a new project added to the QTAP in 2022. Eastern box turtles can be difficult to spot due to their camouflage with the forest floor. The team sought to investigate the detection probability of experienced surveyors to better understand survey error. Three plots were established: powerline, cabin, and triangle. Empty box turtle shells, donated by collaborators at Towson University, were placed by Will or Noelle at randomly generated coordinates within each of the plots. Approximately half of the shells in each plot were partially covered (left image) and half were exposed (right image).</p>
+<p>Surveyors, unaware of shell locations, walked throughout the plot, covering the area as thoroughly as possible looking for the hidden shells. If a shell was spotted, surveyors measured their distance to the shell and took photos and GPS coordinates of the shell location. This study took place for five weeks with surveys primarily done by Andy, Emily, Will, and Noelle, although several volunteers took part in the study during the first week.</p>
+<center>
+<div class="figure">
+<img src="Report2-andy_files/figure-html/unnamed-chunk-15-1.png" alt="**Figure 4:** Images show the two methods of shell deployment used in the detection study. About half of the shells were partially covered (left) and the other half were fully exposed (right)." width="744" />
+<p class="caption">
+<strong>Figure 4:</strong> Images show the two methods of shell deployment used in the detection study. About half of the shells were partially covered (left) and the other half were fully exposed (right).
+</p>
+</div>
+</center>
+</div>
+<div id="literature-cited" class="section level3">
+<h3><strong>Literature Cited</strong></h3>
+<p>Stickel, L. (1950). Populations and Home Range Relationships of the Box Turtle, Terrapene c. carolina (Linnaeus). Ecological Monographs, 20(4), 351-378. <a href="Doi:10.2307/1943570" class="uri">Doi:10.2307/1943570</a></p>
+</div>
+<div id="data-summaries" class="section level3">
+<h3><strong>Data Summaries</strong></h3>
+<center>
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<caption>
+<strong>Table 2:</strong> Summary of 2019, 2020, 2021, and 2022 captures and capture totals for each individual. UKA stands for unknown adult and UMJ stands for unmarked juvenile.
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:left;">
+Turtle ID
+</th>
+<th style="text-align:center;">
+2019
+</th>
+<th style="text-align:center;">
+2020
+</th>
+<th style="text-align:center;">
+2021
+</th>
+<th style="text-align:center;">
+2022
+</th>
+<th style="text-align:center;">
+Totals
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+15
+</td>
+<td style="text-align:left;">
+249
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+22
+</td>
+<td style="text-align:left;">
+443
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+23
+</td>
+<td style="text-align:left;">
+444
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+24
+</td>
+<td style="text-align:left;">
+445
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+25
+</td>
+<td style="text-align:left;">
+446
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+26
+</td>
+<td style="text-align:left;">
+447
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+27
+</td>
+<td style="text-align:left;">
+448
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+28
+</td>
+<td style="text-align:left;">
+449
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+29
+</td>
+<td style="text-align:left;">
+450
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+30
+</td>
+<td style="text-align:left;">
+451
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+31
+</td>
+<td style="text-align:left;">
+452
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+32
+</td>
+<td style="text-align:left;">
+453
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+33
+</td>
+<td style="text-align:left;">
+454
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+34
+</td>
+<td style="text-align:left;">
+455
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+35
+</td>
+<td style="text-align:left;">
+456
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+36
+</td>
+<td style="text-align:left;">
+458
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+37
+</td>
+<td style="text-align:left;">
+459
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+41
+</td>
+<td style="text-align:left;">
+501
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+42
+</td>
+<td style="text-align:left;">
+502
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+43
+</td>
+<td style="text-align:left;">
+503
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+44
+</td>
+<td style="text-align:left;">
+504
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+47
+</td>
+<td style="text-align:left;">
+505
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+48
+</td>
+<td style="text-align:left;">
+506
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+50
+</td>
+<td style="text-align:left;">
+507
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+51
+</td>
+<td style="text-align:left;">
+508
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+15
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+52
+</td>
+<td style="text-align:left;">
+509
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+54
+</td>
+<td style="text-align:left;">
+510
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+55
+</td>
+<td style="text-align:left;">
+511
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+56
+</td>
+<td style="text-align:left;">
+512
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+57
+</td>
+<td style="text-align:left;">
+513
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+58
+</td>
+<td style="text-align:left;">
+514
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+59
+</td>
+<td style="text-align:left;">
+515
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+60
+</td>
+<td style="text-align:left;">
+516
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+61
+</td>
+<td style="text-align:left;">
+517
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+64
+</td>
+<td style="text-align:left;">
+522
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+65
+</td>
+<td style="text-align:left;">
+524
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+66
+</td>
+<td style="text-align:left;">
+525
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+67
+</td>
+<td style="text-align:left;">
+526
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+68
+</td>
+<td style="text-align:left;">
+527
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+69
+</td>
+<td style="text-align:left;">
+528
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+70
+</td>
+<td style="text-align:left;">
+529
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+71
+</td>
+<td style="text-align:left;">
+530
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+72
+</td>
+<td style="text-align:left;">
+531
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+73
+</td>
+<td style="text-align:left;">
+532
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+87
+</td>
+<td style="text-align:left;">
+547
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+182
+</td>
+<td style="text-align:left;">
+646
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+10
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+184
+</td>
+<td style="text-align:left;">
+824
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+5
+</td>
+<td style="text-align:left;">
+1226
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+6
+</td>
+<td style="text-align:left;">
+1342
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+16
+</td>
+<td style="text-align:left;">
+3201
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+18
+</td>
+<td style="text-align:left;">
+4110
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+186
+</td>
+<td style="text-align:left;">
+9006
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+1
+</td>
+<td style="text-align:left;">
+11021
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+3
+</td>
+<td style="text-align:left;">
+11200
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+9
+</td>
+<td style="text-align:left;">
+16010
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+10
+</td>
+<td style="text-align:left;">
+16200
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+193
+</td>
+<td style="text-align:left;">
+UMJ1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+13
+</td>
+<td style="text-align:left;">
+220
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+21
+</td>
+<td style="text-align:left;">
+439
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+39
+</td>
+<td style="text-align:left;">
+466
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+63
+</td>
+<td style="text-align:left;">
+520
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+74
+</td>
+<td style="text-align:left;">
+533
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+75
+</td>
+<td style="text-align:left;">
+534
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+76
+</td>
+<td style="text-align:left;">
+535
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+77
+</td>
+<td style="text-align:left;">
+536
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+78
+</td>
+<td style="text-align:left;">
+537
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+79
+</td>
+<td style="text-align:left;">
+538
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+80
+</td>
+<td style="text-align:left;">
+539
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+8
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+81
+</td>
+<td style="text-align:left;">
+540
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+82
+</td>
+<td style="text-align:left;">
+541
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+83
+</td>
+<td style="text-align:left;">
+542
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+84
+</td>
+<td style="text-align:left;">
+543
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+85
+</td>
+<td style="text-align:left;">
+544
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+86
+</td>
+<td style="text-align:left;">
+545
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+88
+</td>
+<td style="text-align:left;">
+548
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+89
+</td>
+<td style="text-align:left;">
+549
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+90
+</td>
+<td style="text-align:left;">
+550
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+91
+</td>
+<td style="text-align:left;">
+551
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+92
+</td>
+<td style="text-align:left;">
+552
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+93
+</td>
+<td style="text-align:left;">
+553
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+94
+</td>
+<td style="text-align:left;">
+554
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+95
+</td>
+<td style="text-align:left;">
+555
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+96
+</td>
+<td style="text-align:left;">
+556
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+97
+</td>
+<td style="text-align:left;">
+557
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+98
+</td>
+<td style="text-align:left;">
+558
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+99
+</td>
+<td style="text-align:left;">
+559
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+100
+</td>
+<td style="text-align:left;">
+560
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+101
+</td>
+<td style="text-align:left;">
+561
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+102
+</td>
+<td style="text-align:left;">
+562
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+103
+</td>
+<td style="text-align:left;">
+563
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+104
+</td>
+<td style="text-align:left;">
+564
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+105
+</td>
+<td style="text-align:left;">
+565
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+106
+</td>
+<td style="text-align:left;">
+566
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+107
+</td>
+<td style="text-align:left;">
+567
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+108
+</td>
+<td style="text-align:left;">
+568
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+109
+</td>
+<td style="text-align:left;">
+569
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+110
+</td>
+<td style="text-align:left;">
+570
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+111
+</td>
+<td style="text-align:left;">
+571
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+112
+</td>
+<td style="text-align:left;">
+572
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+113
+</td>
+<td style="text-align:left;">
+573
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+114
+</td>
+<td style="text-align:left;">
+574
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+115
+</td>
+<td style="text-align:left;">
+575
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+116
+</td>
+<td style="text-align:left;">
+576
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+117
+</td>
+<td style="text-align:left;">
+577
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+175
+</td>
+<td style="text-align:left;">
+637
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+12
+</td>
+<td style="text-align:left;">
+2139
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+40
+</td>
+<td style="text-align:left;">
+4900
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+183
+</td>
+<td style="text-align:left;">
+7704
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+185
+</td>
+<td style="text-align:left;">
+9002
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+7
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+187
+</td>
+<td style="text-align:left;">
+9204
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+4
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+2
+</td>
+<td style="text-align:left;">
+11024
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+49
+</td>
+<td style="text-align:left;">
+506(546)
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+189
+</td>
+<td style="text-align:left;">
+UKA1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+194
+</td>
+<td style="text-align:left;">
+UMJ2
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+195
+</td>
+<td style="text-align:left;">
+UMJ3
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+8
+</td>
+<td style="text-align:left;">
+148
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+38
+</td>
+<td style="text-align:left;">
+460
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+118
+</td>
+<td style="text-align:left;">
+578
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+119
+</td>
+<td style="text-align:left;">
+579
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+120
+</td>
+<td style="text-align:left;">
+580
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+121
+</td>
+<td style="text-align:left;">
+581
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+122
+</td>
+<td style="text-align:left;">
+582
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+123
+</td>
+<td style="text-align:left;">
+585
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+124
+</td>
+<td style="text-align:left;">
+586
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+125
+</td>
+<td style="text-align:left;">
+587
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+126
+</td>
+<td style="text-align:left;">
+588
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+127
+</td>
+<td style="text-align:left;">
+589
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+128
+</td>
+<td style="text-align:left;">
+590
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+129
+</td>
+<td style="text-align:left;">
+591
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+130
+</td>
+<td style="text-align:left;">
+593
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+131
+</td>
+<td style="text-align:left;">
+594
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+132
+</td>
+<td style="text-align:left;">
+595
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+133
+</td>
+<td style="text-align:left;">
+596
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+134
+</td>
+<td style="text-align:left;">
+597
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+136
+</td>
+<td style="text-align:left;">
+598
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+137
+</td>
+<td style="text-align:left;">
+599
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+138
+</td>
+<td style="text-align:left;">
+601
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+139
+</td>
+<td style="text-align:left;">
+602
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+142
+</td>
+<td style="text-align:left;">
+604
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+145
+</td>
+<td style="text-align:left;">
+606
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+148
+</td>
+<td style="text-align:left;">
+609
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+188
+</td>
+<td style="text-align:left;">
+995
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+4
+</td>
+<td style="text-align:left;">
+1144
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+46
+</td>
+<td style="text-align:left;">
+5042
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+53
+</td>
+<td style="text-align:left;">
+5090
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+45
+</td>
+<td style="text-align:left;">
+504(584)
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+135
+</td>
+<td style="text-align:left;">
+597B
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+190
+</td>
+<td style="text-align:left;">
+UKA2
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+191
+</td>
+<td style="text-align:left;">
+UKA3
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+192
+</td>
+<td style="text-align:left;">
+UKA4
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+196
+</td>
+<td style="text-align:left;">
+UMJ4
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+7
+</td>
+<td style="text-align:left;">
+143
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+11
+</td>
+<td style="text-align:left;">
+174
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+17
+</td>
+<td style="text-align:left;">
+331
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+20
+</td>
+<td style="text-align:left;">
+432
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+3
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+62
+</td>
+<td style="text-align:left;">
+518
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+140
+</td>
+<td style="text-align:left;">
+603
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+144
+</td>
+<td style="text-align:left;">
+605
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+146
+</td>
+<td style="text-align:left;">
+607
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+147
+</td>
+<td style="text-align:left;">
+608
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+149
+</td>
+<td style="text-align:left;">
+610
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+150
+</td>
+<td style="text-align:left;">
+611
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+151
+</td>
+<td style="text-align:left;">
+612
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+152
+</td>
+<td style="text-align:left;">
+613
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+153
+</td>
+<td style="text-align:left;">
+614
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+154
+</td>
+<td style="text-align:left;">
+615
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+155
+</td>
+<td style="text-align:left;">
+616
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+156
+</td>
+<td style="text-align:left;">
+617
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+157
+</td>
+<td style="text-align:left;">
+618
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+158
+</td>
+<td style="text-align:left;">
+619
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+159
+</td>
+<td style="text-align:left;">
+620
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+160
+</td>
+<td style="text-align:left;">
+621
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+161
+</td>
+<td style="text-align:left;">
+622
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+162
+</td>
+<td style="text-align:left;">
+623
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+163
+</td>
+<td style="text-align:left;">
+624
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+164
+</td>
+<td style="text-align:left;">
+625
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+165
+</td>
+<td style="text-align:left;">
+626
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+166
+</td>
+<td style="text-align:left;">
+627
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+167
+</td>
+<td style="text-align:left;">
+628
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+168
+</td>
+<td style="text-align:left;">
+629
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+169
+</td>
+<td style="text-align:left;">
+631
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+170
+</td>
+<td style="text-align:left;">
+632
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+171
+</td>
+<td style="text-align:left;">
+633
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+172
+</td>
+<td style="text-align:left;">
+634
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+173
+</td>
+<td style="text-align:left;">
+635
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+174
+</td>
+<td style="text-align:left;">
+636
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+177
+</td>
+<td style="text-align:left;">
+638
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+178
+</td>
+<td style="text-align:left;">
+640
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+179
+</td>
+<td style="text-align:left;">
+641
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+180
+</td>
+<td style="text-align:left;">
+642
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+181
+</td>
+<td style="text-align:left;">
+643
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+14
+</td>
+<td style="text-align:left;">
+2250
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+19
+</td>
+<td style="text-align:left;">
+4132
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+141
+</td>
+<td style="text-align:left;">
+603Stickel
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+143
+</td>
+<td style="text-align:left;">
+604Snowden
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+176
+</td>
+<td style="text-align:left;">
+637Stickel
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+197
+</td>
+<td style="text-align:left;">
+UMJ5
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+198
+</td>
+<td style="text-align:left;">
+UMJ6
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+1
+</td>
+</tr>
+</tbody>
+</table>
+<table style="width:30%; margin-left: auto; margin-right: auto;" class="table table-striped">
+<caption>
+<strong>Table 3:</strong> Summary of 2019, 2020, 2021, and 2022 capture totals, number of unique individuals, and number of new captures
+</caption>
+<thead>
+<tr>
+<th style="text-align:center;">
+Year
+</th>
+<th style="text-align:center;">
+Individuals
+</th>
+<th style="text-align:center;">
+New Individuals
+</th>
+<th style="text-align:center;">
+Total Captures
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+2019
+</td>
+<td style="text-align:center;">
+57
+</td>
+<td style="text-align:center;">
+42
+</td>
+<td style="text-align:center;">
+63
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2020
+</td>
+<td style="text-align:center;">
+73
+</td>
+<td style="text-align:center;">
+49
+</td>
+<td style="text-align:center;">
+113
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2021
+</td>
+<td style="text-align:center;">
+60
+</td>
+<td style="text-align:center;">
+30
+</td>
+<td style="text-align:center;">
+82
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2022
+</td>
+<td style="text-align:center;">
+86
+</td>
+<td style="text-align:center;">
+41
+</td>
+<td style="text-align:center;">
+126
+</td>
+</tr>
+</tbody>
+</table>
+<div class="figure">
+<div id="htmlwidget-6de3a3beee29b5ad9935" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-6de3a3beee29b5ad9935">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["Esri.WorldImagery",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addCircleMarkers","args":[[39.05944,null,39.05639,39.056539,39.05917,39.053987,39.05285,39.05056,39.057755,39.0587,39.053222,39.054115,39.051206,39.05619,39.056487,39.05076,39.05076,39.04883,39.04949,39.0515,39.05653,39.05545,39.049986,39.050026,39.052829,39.053918,39.050755,39.050755,39.05065,39.059355,39.059471,39.058814,39.057193,39.057713,39.058283,39.057854,39.050068,39.050642,39.057986,39.050194,39.0594113,39.0497607,39.0600737,39.0600463,39.053653,39.050462,39.058929,39.0592377,39.060102,39.060425,39.0568333,39.050607,39.0584927,39.059335,39.056129,39.050062,39.051277,39.050545,39.049309,39.059322,39.05743,39.050919,39.05092,39.0499505,39.04983,39.050056,39.0506177,39.0507277,39.0518303,39.053397,39.0526985,39.049819,39.049696,39.0532857,39.049882,39.061301,39.0583847,39.059936,39.0589733,39.0589733,39.059025,39.0589053,39.0591683,39.058777,39.049684,39.050918,39.049851,39.052209,39.052381,39.0519753,39.052448,39.053951,39.0534577,39.052723,39.0498157,39.0498157,39.054204,39.05388,39.0498053,39.049823,39.04974,39.0551587,39.05261,39.051351,39.0568323,39.0512243,39.0527547,39.053305,39.052028,39.055761,39.053749,39.0538777,39.0594963,39.059869,39.059428,39.059259,39.059139,39.058063,39.0590177,39.059651,39.049528,39.0592243,39.059033,39.0589513,39.059264,39.059005,39.059302,39.058933,39.057404,39.052354,39.054958,39.056271,39.05917,39.058449,39.057533,39.0499203,39.0539953,39.055259,39.059147,39.0577675,39.057866,39.057866,39.053848,39.053851,39.054321,39.0519355,39.0520327,39.05801,39.0583033,39.0583033,39.0554003,39.055479,39.0498927,39.059113,39.05756,39.0501047,39.0522823,39.049339,39.053976,39.052378,39.0582847,39.058291,39.049854,39.0595047,39.0573947,39.0573947,39.047957,39.0529517,39.053884,39.0482897,39.052787,39.0528593,39.050612,39.052492,39.0500485,39.0526987,39.050659,39.0526843333333,39.0521616666667,39.050721,39.0502736666667,39.0535186666667,39.0535186666667,39.0584736666667,39.0523133333333,39.0519956666667,39.0588993333333,39.051907,39.0518893333333,39.0517946666667,39.0503516666667,39.049695,39.0491506666667,39.0563173333333,39.057206,39.0488003333333,39.0580923333333,39.0606123333333,39.0488323333333,39.05067,39.0528476666667,39.049808,null,39.050194,39.0506133333333,39.0507646666667,39.0509466666667,39.0578303333333,null,null,39.0507023333333,39.050134,39.050626,39.0524493333333,39.0536643333333,39.0536643333333,39.050344,null,39.0506555,39.053888,39.0540663333333,39.0522136666667,39.049857,39.0536443333333,39.05621,39.0591433333333,39.0588313333333,39.0597276666667,39.052258,39.0507343333333,39.0540643333333,39.0524746666667,39.0521893333333,39.0505226666667,39.0525853333333,39.0595353333333,39.0522686666667,39.055294,39.057204,39.059249,39.057204,39.0538706666667,39.0590513333333,39.059738,39.057414,39.0493706666667,39.048964,39.0499863333333,39.0525623333333,39.057615,39.059736,39.0596283333333,39.0574283333333,39.0534416666667,39.054872,39.0575656666667,39.0588526666667,39.0563066666667,39.049976,39.0519393333333,39.0552313333333,39.0523786666667,39.0554696666667,39.0523086666667,39.0572866666667,39.0586246666667,39.0590316666667,39.05747,39.05744,39.05803,39.0563226666667,39.056878,39.058231,39.0592633333333,39.0571383333333,39.0590146666667,39.0592633333333,39.0574946666667,39.054091,39.058187,39.058005,39.048079,39.0580336666667,39.0581383333333,39.0542026666667,39.052906,39.0480183333333,39.059524,39.059171,39.0594256666667,39.059908,39.050136,39.0583396666667,39.059254,39.0585103333333,39.0485593333333,39.04841,39.059288,39.0592183333333,39.058808,39.0583816666667,39.0592926666667,39.0593106666667,39.0529673333333,39.0491423333333,39.0591153333333,39.0591836666667,39.0575076666667,39.056158,39.054797,39.0480443333333,39.0529426666667,39.0501596666667,39.049059,39.0595046666667,39.0540823333333,39.058765,39.0489926666667,39.0532553333333,39.0582106666667,39.0592593333333,39.0564636666667,39.0582503333333,39.0585426666667,39.048064,39.0566143333333,39.0578806666667,39.056441,39.0577173333333,39.0596186666667,39.0586703333333,39.0578363333333,39.0528116666667,39.0490763333333,39.0566223333333,39.0573536666667,39.0583446666667,39.058443,39.0592446666667,39.0537826666667,39.049918,39.0557653333333,39.0489393333333,39.0498433333333,39.051557,39.057355,39.0484623333333,39.0587223333333,39.0570133333333,39.056479,39.0576913333333,39.0595436666667,39.0595866666667,39.056271,39.0591053333333,39.0587496666667,39.0583063333333,39.05769,39.0582576666667,39.055993,39.0591633333333,39.050319,39.0526143333333,39.0589853333333,39.0589933333333,39.058042,39.0530806666667,39.058953,39.05549,39.057601,39.0481346666667,39.049837,39.0498746666667,39.0539266666667,39.0539266666667,39.053311,39.04808,39.04808,39.0497246666667,39.053845,39.05858,39.05922,39.048601,null],[-76.81528,null,-76.81833,-76.81944,-76.82167,-76.809836,-76.81263,-76.80778,-76.817051,-76.816952,-76.810521,-76.809823,-76.810103,-76.81768,-76.817721,-76.80861,-76.80861,-76.80904,-76.81125,-76.81027,-76.82071,-76.81936,-76.807866,-76.806927,-76.806919,-76.811662,-76.808939,-76.808943,-76.80738,-76.821715,-76.821975,-76.82254,-76.825827,-76.823677,-76.822193,-76.821548,-76.808209,-76.806949,-76.818376,-76.80771,-76.82194067,-76.807266,-76.82183567,-76.82234067,-76.808013,-76.807344,-76.821394,-76.821934,-76.821623,-76.821633,-76.81685,-76.806659,-76.821298,-76.82452,-76.822002,-76.807397,-76.807091,-76.806472,-76.80585,-76.82497,-76.8213,-76.806092,-76.806608,-76.8075375,-76.8073455,-76.8056593,-76.8092513,-76.8060633,-76.806742,-76.810751,-76.8071097,-76.807574,-76.80615,-76.8083523,-76.806141,-76.8209053,-76.8193593,-76.822419,-76.8215247,-76.8215247,-76.823244,-76.8233206,-76.8260107,-76.821883,-76.8062205,-76.8059276,-76.8068403,-76.807038,-76.8068143,-76.8054107,-76.807049,-76.806493,-76.805148,-76.808815,-76.807244,-76.807244,-76.809102,-76.805777,-76.806606,-76.806622,-76.806456,-76.8090993,-76.8079493,-76.807789,-76.8077497,-76.8086493,-76.8054677,-76.804609,-76.805792,-76.8066185,-76.805695,-76.8081257,-76.8212917,-76.822031,-76.821879,-76.824414,-76.826503,-76.8226867,-76.823601,-76.8267228,-76.806077,-76.8216783,-76.825245,-76.8229617,-76.824935,-76.825374,-76.821901,-76.826623,-76.8264677,-76.807394,-76.808992,-76.820188,-76.824394,-76.823436,-76.82113,-76.8074407,-76.8064107,-76.8089763,-76.823749,-76.82447,-76.823607,-76.823607,-76.806423,-76.806452,-76.8087183,-76.807427,-76.8071507,-76.8211047,-76.82144,-76.82144,-76.8084703,-76.808476,-76.807676,-76.825418,-76.82163,-76.807407,-76.8093017,-76.805765,-76.806335,-76.809421,-76.8239683,-76.8202243,-76.8073877,-76.821985,-76.826137,-76.826137,-76.807164,-76.806539,-76.806566,-76.805707,-76.805884,-76.8060527,-76.817405,-76.80637,-76.8072758,-76.8071097,-76.8074586666667,-76.8062366666667,-76.806759,-76.8090803333333,-76.8199833333333,-76.8119036666667,-76.8119036666667,-76.8240013333333,-76.8084963333333,-76.8068506666667,-76.824383,-76.8082226666667,-76.8063636666667,-76.807068,-76.8076123333333,-76.8058663333333,-76.8080606666667,-76.822148,-76.8226276666667,-76.8076046666667,-76.821459,-76.8204603333333,-76.807758,-76.818562,-76.804617,-76.8063296666667,null,-76.8066156666667,-76.806943,-76.8075053333333,-76.806625,-76.8215703333333,null,null,-76.806993,-76.8067893333333,-76.8053853333333,-76.8077046666667,-76.806656,-76.806656,-76.806654,null,-76.8069865,-76.806459,-76.8075286666667,-76.807378,-76.8067743333333,-76.8069413333333,-76.8214516666666,-76.8220863333333,-76.8227946666667,-76.821846,-76.8073226666667,-76.8071156666667,-76.8068146666667,-76.8095823333333,-76.8068976666667,-76.806955,-76.8090686666667,-76.827004,-76.806641,-76.8077206666667,-76.824881,-76.821726,-76.824881,-76.8067156666667,-76.823596,-76.8221183333333,-76.82354,-76.805961,-76.808644,-76.8075866666667,-76.808611,-76.823073,-76.826771,-76.8266563333333,-76.820845,-76.805699,-76.8074456666667,-76.823512,-76.8255946666667,-76.809861,-76.806813,-76.8195703333333,-76.8110706666667,-76.8062516666667,-76.809475,-76.8088516666667,-76.8214493333333,-76.8216576666667,-76.8249326666667,-76.8211,-76.82175,-76.82165,-76.821156,-76.8213596666667,-76.8215556666667,-76.8264936666667,-76.8228173333333,-76.8258123333333,-76.8264936666667,-76.8218056666667,-76.810362,-76.8216703333333,-76.82159,-76.806505,-76.8217576666667,-76.8215986666667,-76.8095556666667,-76.8059103333333,-76.806395,-76.821761,-76.8257753333333,-76.8248283333333,-76.8263466666667,-76.815352,-76.8215743333333,-76.8214496666667,-76.822862,-76.8069686666667,-76.806702,-76.82157,-76.8247646666667,-76.825288,-76.821363,-76.826473,-76.8265716666667,-76.8058876666667,-76.8085486666667,-76.8245326666667,-76.821546,-76.8243303333333,-76.8083513333333,-76.8094293333333,-76.8064953333333,-76.8058663333333,-76.8074556666667,-76.809519,-76.8220863333333,-76.810752,-76.8229993333333,-76.8089106666667,-76.8106376666667,-76.821596,-76.8216613333333,-76.8200573333333,-76.8217413333333,-76.8227953333333,-76.8066236666667,-76.8255133333333,-76.824178,-76.8226633333333,-76.8216323333333,-76.826012,-76.8239203333333,-76.8212986666667,-76.810131,-76.8072573333333,-76.8213026666667,-76.8251043333333,-76.8225123333333,-76.824461,-76.82442,-76.808938,-76.80695,-76.8099753333333,-76.8076446666667,-76.806483,-76.7953943333333,-76.821302,-76.8081616666667,-76.825556,-76.8084876666667,-76.825232,-76.8236943333333,-76.8216373333333,-76.821773,-76.8081563333333,-76.8213976666667,-76.8252396666667,-76.8252326666667,-76.822344,-76.8222753333333,-76.82505,-76.8239656666667,-76.806586,-76.8050513333333,-76.8220196666667,-76.8214596666667,-76.8208436666667,-76.80696,-76.8230613333333,-76.82155,-76.820702,-76.808184,-76.8128423333333,-76.8063563333333,-76.807637,-76.807637,-76.805931,-76.806433,-76.806433,-76.8060013333333,-76.8106993333333,-76.82461,-76.82203,-76.810197,null],2,null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":5,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.2},null,null,["Turtle ID:<br/>UMJ1<br/> <br/>Year:<br/>2019","Turtle ID:<br/>16010<br/> <br/>Year:<br/>2019","Turtle ID:<br/>443<br/> <br/>Year:<br/>2019","Turtle ID:<br/>444<br/> <br/>Year:<br/>2019","Turtle ID:<br/>444<br/> <br/>Year:<br/>2019","Turtle ID:<br/>445<br/> <br/>Year:<br/>2019","Turtle ID:<br/>249<br/> <br/>Year:<br/>2019","Turtle ID:<br/>446<br/> <br/>Year:<br/>2019","Turtle ID:<br/>501<br/> <br/>Year:<br/>2019","Turtle ID:<br/>502<br/> <br/>Year:<br/>2019","Turtle ID:<br/>503<br/> <br/>Year:<br/>2019","Turtle ID:<br/>504<br/> <br/>Year:<br/>2019","Turtle ID:<br/>505<br/> <br/>Year:<br/>2019","Turtle ID:<br/>447<br/> <br/>Year:<br/>2019","Turtle ID:<br/>11021<br/> <br/>Year:<br/>2019","Turtle ID:<br/>449<br/> <br/>Year:<br/>2019","Turtle ID:<br/>4110<br/> <br/>Year:<br/>2019","Turtle ID:<br/>1342<br/> <br/>Year:<br/>2019","Turtle ID:<br/>450<br/> <br/>Year:<br/>2019","Turtle ID:<br/>451<br/> <br/>Year:<br/>2019","Turtle ID:<br/>3201<br/> <br/>Year:<br/>2019","Turtle ID:<br/>506<br/> <br/>Year:<br/>2019","Turtle ID:<br/>547<br/> <br/>Year:<br/>2019","Turtle ID:<br/>508<br/> <br/>Year:<br/>2019","Turtle ID:<br/>509<br/> <br/>Year:<br/>2019","Turtle ID:<br/>510<br/> <br/>Year:<br/>2019","Turtle ID:<br/>511<br/> <br/>Year:<br/>2019","Turtle ID:<br/>512<br/> <br/>Year:<br/>2019","Turtle ID:<br/>513<br/> <br/>Year:<br/>2019","Turtle ID:<br/>514<br/> <br/>Year:<br/>2019","Turtle ID:<br/>515<br/> <br/>Year:<br/>2019","Turtle ID:<br/>516<br/> <br/>Year:<br/>2019","Turtle ID:<br/>517<br/> <br/>Year:<br/>2019","Turtle ID:<br/>452<br/> <br/>Year:<br/>2019","Turtle ID:<br/>453<br/> <br/>Year:<br/>2019","Turtle ID:<br/>454<br/> <br/>Year:<br/>2019","Turtle ID:<br/>547<br/> <br/>Year:<br/>2019","Turtle ID:<br/>455<br/> <br/>Year:<br/>2019","Turtle ID:<br/>456<br/> <br/>Year:<br/>2019","Turtle ID:<br/>507<br/> <br/>Year:<br/>2019","Turtle ID:<br/>9006<br/> <br/>Year:<br/>2019","Turtle ID:<br/>448<br/> <br/>Year:<br/>2019","Turtle ID:<br/>522<br/> <br/>Year:<br/>2019","Turtle ID:<br/>1226<br/> <br/>Year:<br/>2019","Turtle ID:<br/>524<br/> <br/>Year:<br/>2019","Turtle ID:<br/>525<br/> <br/>Year:<br/>2019","Turtle ID:<br/>646<br/> <br/>Year:<br/>2019","Turtle ID:<br/>11200<br/> <br/>Year:<br/>2019","Turtle ID:<br/>458<br/> <br/>Year:<br/>2019","Turtle ID:<br/>16200<br/> <br/>Year:<br/>2019","Turtle ID:<br/>526<br/> <br/>Year:<br/>2019","Turtle ID:<br/>508<br/> <br/>Year:<br/>2019","Turtle ID:<br/>527<br/> <br/>Year:<br/>2019","Turtle ID:<br/>528<br/> <br/>Year:<br/>2019","Turtle ID:<br/>529<br/> <br/>Year:<br/>2019","Turtle ID:<br/>450<br/> <br/>Year:<br/>2019","Turtle ID:<br/>508<br/> <br/>Year:<br/>2019","Turtle ID:<br/>530<br/> <br/>Year:<br/>2019","Turtle ID:<br/>531<br/> <br/>Year:<br/>2019","Turtle ID:<br/>824<br/> <br/>Year:<br/>2019","Turtle ID:<br/>459<br/> <br/>Year:<br/>2019","Turtle ID:<br/>532<br/> <br/>Year:<br/>2019","Turtle ID:<br/>508<br/> <br/>Year:<br/>2019","Turtle ID:<br/>536<br/> <br/>Year:<br/>2020","Turtle ID:<br/>513<br/> <br/>Year:<br/>2020","Turtle ID:<br/>549<br/> <br/>Year:<br/>2020","Turtle ID:<br/>533<br/> <br/>Year:<br/>2020","Turtle ID:<br/>507<br/> <br/>Year:<br/>2020","Turtle ID:<br/>534<br/> <br/>Year:<br/>2020","Turtle ID:<br/>535<br/> <br/>Year:<br/>2020","Turtle ID:<br/>637<br/> <br/>Year:<br/>2020","Turtle ID:<br/>536<br/> <br/>Year:<br/>2020","Turtle ID:<br/>508<br/> <br/>Year:<br/>2020","Turtle ID:<br/>451<br/> <br/>Year:<br/>2020","Turtle ID:<br/>536<br/> <br/>Year:<br/>2020","Turtle ID:<br/>537<br/> <br/>Year:<br/>2020","Turtle ID:<br/>4900<br/> <br/>Year:<br/>2020","Turtle ID:<br/>466<br/> <br/>Year:<br/>2020","Turtle ID:<br/>542<br/> <br/>Year:<br/>2020","Turtle ID:<br/>646<br/> <br/>Year:<br/>2020","Turtle ID:<br/>538<br/> <br/>Year:<br/>2020","Turtle ID:<br/>541<br/> <br/>Year:<br/>2020","Turtle ID:<br/>7704<br/> <br/>Year:<br/>2020","Turtle ID:<br/>543<br/> <br/>Year:<br/>2020","Turtle ID:<br/>11024<br/> <br/>Year:<br/>2020","Turtle ID:<br/>536<br/> <br/>Year:<br/>2020","Turtle ID:<br/>508<br/> <br/>Year:<br/>2020","Turtle ID:<br/>2139<br/> <br/>Year:<br/>2020","Turtle ID:<br/>539<br/> <br/>Year:<br/>2020","Turtle ID:<br/>220<br/> <br/>Year:<br/>2020","Turtle ID:<br/>455<br/> <br/>Year:<br/>2020","Turtle ID:<br/>524<br/> <br/>Year:<br/>2020","Turtle ID:<br/>540<br/> <br/>Year:<br/>2020","Turtle ID:<br/>505<br/> <br/>Year:<br/>2020","Turtle ID:<br/>450<br/> <br/>Year:<br/>2020","Turtle ID:<br/>513<br/> <br/>Year:<br/>2020","Turtle ID:<br/>544<br/> <br/>Year:<br/>2020","Turtle ID:<br/>545<br/> <br/>Year:<br/>2020","Turtle ID:<br/>508<br/> <br/>Year:<br/>2020","Turtle ID:<br/>9204<br/> <br/>Year:<br/>2020","Turtle ID:<br/>508<br/> <br/>Year:<br/>2020","Turtle ID:<br/>506(546)<br/> <br/>Year:<br/>2020","Turtle ID:<br/>547<br/> <br/>Year:<br/>2020","Turtle ID:<br/>534<br/> <br/>Year:<br/>2020","Turtle ID:<br/>548<br/> <br/>Year:<br/>2020","Turtle ID:<br/>505<br/> <br/>Year:<br/>2020","Turtle ID:<br/>549<br/> <br/>Year:<br/>2020","Turtle ID:<br/>550<br/> <br/>Year:<br/>2020","Turtle ID:<br/>536<br/> <br/>Year:<br/>2020","Turtle ID:<br/>UKA1<br/> <br/>Year:<br/>2020","Turtle ID:<br/>551<br/> <br/>Year:<br/>2020","Turtle ID:<br/>552<br/> <br/>Year:<br/>2020","Turtle ID:<br/>553<br/> <br/>Year:<br/>2020","Turtle ID:<br/>554<br/> <br/>Year:<br/>2020","Turtle ID:<br/>515<br/> <br/>Year:<br/>2020","Turtle ID:<br/>520<br/> <br/>Year:<br/>2020","Turtle ID:<br/>555<br/> <br/>Year:<br/>2020","Turtle ID:<br/>556<br/> <br/>Year:<br/>2020","Turtle ID:<br/>520<br/> <br/>Year:<br/>2020","Turtle ID:<br/>557<br/> <br/>Year:<br/>2020","Turtle ID:<br/>558<br/> <br/>Year:<br/>2020","Turtle ID:<br/>560<br/> <br/>Year:<br/>2020","Turtle ID:<br/>520<br/> <br/>Year:<br/>2020","Turtle ID:<br/>559<br/> <br/>Year:<br/>2020","Turtle ID:<br/>564<br/> <br/>Year:<br/>2020","Turtle ID:<br/>561<br/> <br/>Year:<br/>2020","Turtle ID:<br/>646<br/> <br/>Year:<br/>2020","Turtle ID:<br/>562<br/> <br/>Year:<br/>2020","Turtle ID:<br/>563<br/> <br/>Year:<br/>2020","Turtle ID:<br/>565<br/> <br/>Year:<br/>2020","Turtle ID:<br/>566<br/> <br/>Year:<br/>2020","Turtle ID:<br/>444<br/> <br/>Year:<br/>2020","Turtle ID:<br/>7704<br/> <br/>Year:<br/>2020","Turtle ID:<br/>567<br/> <br/>Year:<br/>2020","Turtle ID:<br/>9002<br/> <br/>Year:<br/>2020","Turtle ID:<br/>450<br/> <br/>Year:<br/>2020","Turtle ID:<br/>551<br/> <br/>Year:<br/>2020","Turtle ID:<br/>439<br/> <br/>Year:<br/>2020","Turtle ID:<br/>568<br/> <br/>Year:<br/>2020","Turtle ID:<br/>569<br/> <br/>Year:<br/>2020","Turtle ID:<br/>570<br/> <br/>Year:<br/>2020","Turtle ID:<br/>520<br/> <br/>Year:<br/>2020","Turtle ID:<br/>551<br/> <br/>Year:<br/>2020","Turtle ID:<br/>UMJ2<br/> <br/>Year:<br/>2020","Turtle ID:<br/>552<br/> <br/>Year:<br/>2020","Turtle ID:<br/>539<br/> <br/>Year:<br/>2020","Turtle ID:<br/>539<br/> <br/>Year:<br/>2020","Turtle ID:<br/>9002<br/> <br/>Year:<br/>2020","Turtle ID:<br/>459<br/> <br/>Year:<br/>2020","Turtle ID:<br/>515<br/> <br/>Year:<br/>2020","Turtle ID:<br/>506(546)<br/> <br/>Year:<br/>2020","Turtle ID:<br/>439<br/> <br/>Year:<br/>2020","Turtle ID:<br/>507<br/> <br/>Year:<br/>2020","Turtle ID:<br/>520<br/> <br/>Year:<br/>2020","Turtle ID:<br/>9002<br/> <br/>Year:<br/>2020","Turtle ID:<br/>450<br/> <br/>Year:<br/>2020","Turtle ID:<br/>571<br/> <br/>Year:<br/>2020","Turtle ID:<br/>558<br/> <br/>Year:<br/>2020","Turtle ID:<br/>524<br/> <br/>Year:<br/>2020","Turtle ID:<br/>565<br/> <br/>Year:<br/>2020","Turtle ID:<br/>570<br/> <br/>Year:<br/>2020","Turtle ID:<br/>572<br/> <br/>Year:<br/>2020","Turtle ID:<br/>507<br/> <br/>Year:<br/>2020","Turtle ID:<br/>9006<br/> <br/>Year:<br/>2020","Turtle ID:<br/>563<br/> <br/>Year:<br/>2020","Turtle ID:<br/>573<br/> <br/>Year:<br/>2020","Turtle ID:<br/>574<br/> <br/>Year:<br/>2020","Turtle ID:<br/>509<br/> <br/>Year:<br/>2020","Turtle ID:<br/>524<br/> <br/>Year:<br/>2020","Turtle ID:<br/>575<br/> <br/>Year:<br/>2020","Turtle ID:<br/>539<br/> <br/>Year:<br/>2020","Turtle ID:<br/>577<br/> <br/>Year:<br/>2020","Turtle ID:<br/>576<br/> <br/>Year:<br/>2020","Turtle ID:<br/>539<br/> <br/>Year:<br/>2020","Turtle ID:<br/>507<br/> <br/>Year:<br/>2020","Turtle ID:<br/>UMJ3<br/> <br/>Year:<br/>2020","Turtle ID:<br/>513<br/> <br/>Year:<br/>2021","Turtle ID:<br/>539<br/> <br/>Year:<br/>2021","Turtle ID:<br/>547<br/> <br/>Year:<br/>2021","Turtle ID:<br/>511<br/> <br/>Year:<br/>2021","Turtle ID:<br/>578<br/> <br/>Year:<br/>2021","Turtle ID:<br/>552<br/> <br/>Year:<br/>2021","Turtle ID:<br/>UKA2<br/> <br/>Year:<br/>2021","Turtle ID:<br/>579<br/> <br/>Year:<br/>2021","Turtle ID:<br/>534<br/> <br/>Year:<br/>2021","Turtle ID:<br/>2139<br/> <br/>Year:<br/>2021","Turtle ID:<br/>580<br/> <br/>Year:<br/>2021","Turtle ID:<br/>581<br/> <br/>Year:<br/>2021","Turtle ID:<br/>582<br/> <br/>Year:<br/>2021","Turtle ID:<br/>593<br/> <br/>Year:<br/>2021","Turtle ID:<br/>530<br/> <br/>Year:<br/>2021","Turtle ID:<br/>504(584)<br/> <br/>Year:<br/>2021","Turtle ID:<br/>585<br/> <br/>Year:<br/>2021","Turtle ID:<br/>16200<br/> <br/>Year:<br/>2021","Turtle ID:<br/>586<br/> <br/>Year:<br/>2021","Turtle ID:<br/>4110<br/> <br/>Year:<br/>2021","Turtle ID:<br/>527<br/> <br/>Year:<br/>2021","Turtle ID:<br/>597<br/> <br/>Year:<br/>2021","Turtle ID:<br/>UMJ4<br/> <br/>Year:<br/>2021","Turtle ID:<br/>601<br/> <br/>Year:<br/>2021","Turtle ID:<br/>590<br/> <br/>Year:<br/>2021","Turtle ID:<br/>508<br/> <br/>Year:<br/>2021","Turtle ID:<br/>9204<br/> <br/>Year:<br/>2021","Turtle ID:<br/>530<br/> <br/>Year:<br/>2021","Turtle ID:<br/>530<br/> <br/>Year:<br/>2021","Turtle ID:<br/>507<br/> <br/>Year:<br/>2021","Turtle ID:<br/>508<br/> <br/>Year:<br/>2021","Turtle ID:<br/>587<br/> <br/>Year:<br/>2021","Turtle ID:<br/>646<br/> <br/>Year:<br/>2021","Turtle ID:<br/>UKA3<br/> <br/>Year:<br/>2021","Turtle ID:<br/>530<br/> <br/>Year:<br/>2021","Turtle ID:<br/>508<br/> <br/>Year:<br/>2021","Turtle ID:<br/>525<br/> <br/>Year:<br/>2021","Turtle ID:<br/>505<br/> <br/>Year:<br/>2021","Turtle ID:<br/>524<br/> <br/>Year:<br/>2021","Turtle ID:<br/>588<br/> <br/>Year:<br/>2021","Turtle ID:<br/>9204<br/> <br/>Year:<br/>2021","Turtle ID:<br/>530<br/> <br/>Year:<br/>2021","Turtle ID:<br/>530<br/> <br/>Year:<br/>2021","Turtle ID:<br/>524<br/> <br/>Year:<br/>2021","Turtle ID:<br/>593<br/> <br/>Year:<br/>2021","Turtle ID:<br/>2139<br/> <br/>Year:<br/>2021","Turtle ID:<br/>508<br/> <br/>Year:<br/>2021","Turtle ID:<br/>593<br/> <br/>Year:<br/>2021","Turtle ID:<br/>589<br/> <br/>Year:<br/>2021","Turtle ID:<br/>9006<br/> <br/>Year:<br/>2021","Turtle ID:<br/>591<br/> <br/>Year:<br/>2021","Turtle ID:<br/>560<br/> <br/>Year:<br/>2021","Turtle ID:<br/>2139<br/> <br/>Year:<br/>2021","Turtle ID:<br/>1144<br/> <br/>Year:<br/>2021","Turtle ID:<br/>593<br/> <br/>Year:<br/>2021","Turtle ID:<br/>505<br/> <br/>Year:<br/>2021","Turtle ID:<br/>539<br/> <br/>Year:<br/>2021","Turtle ID:<br/>508<br/> <br/>Year:<br/>2021","Turtle ID:<br/>565<br/> <br/>Year:<br/>2021","Turtle ID:<br/>604<br/> <br/>Year:<br/>2021","Turtle ID:<br/>455<br/> <br/>Year:<br/>2021","Turtle ID:<br/>UKA4<br/> <br/>Year:<br/>2021","Turtle ID:<br/>594<br/> <br/>Year:<br/>2021","Turtle ID:<br/>5042<br/> <br/>Year:<br/>2021","Turtle ID:<br/>5090<br/> <br/>Year:<br/>2021","Turtle ID:<br/>588<br/> <br/>Year:<br/>2021","Turtle ID:<br/>567<br/> <br/>Year:<br/>2021","Turtle ID:<br/>995<br/> <br/>Year:<br/>2021","Turtle ID:<br/>148<br/> <br/>Year:<br/>2021","Turtle ID:<br/>602<br/> <br/>Year:<br/>2021","Turtle ID:<br/>595<br/> <br/>Year:<br/>2021","Turtle ID:<br/>507<br/> <br/>Year:<br/>2021","Turtle ID:<br/>571<br/> <br/>Year:<br/>2021","Turtle ID:<br/>596<br/> <br/>Year:<br/>2021","Turtle ID:<br/>460<br/> <br/>Year:<br/>2021","Turtle ID:<br/>597B<br/> <br/>Year:<br/>2021","Turtle ID:<br/>598<br/> <br/>Year:<br/>2021","Turtle ID:<br/>524<br/> <br/>Year:<br/>2021","Turtle ID:<br/>593<br/> <br/>Year:<br/>2021","Turtle ID:<br/>599<br/> <br/>Year:<br/>2021","Turtle ID:<br/>609<br/> <br/>Year:<br/>2021","Turtle ID:<br/>606<br/> <br/>Year:<br/>2021","Turtle ID:<br/>507<br/> <br/>Year:<br/>2022","Turtle ID:<br/>604Snowden<br/> <br/>Year:<br/>2022","Turtle ID:<br/>603<br/> <br/>Year:<br/>2022","Turtle ID:<br/>535<br/> <br/>Year:<br/>2022","Turtle ID:<br/>451<br/> <br/>Year:<br/>2022","Turtle ID:<br/>565<br/> <br/>Year:<br/>2022","Turtle ID:<br/>9002<br/> <br/>Year:<br/>2022","Turtle ID:<br/>607<br/> <br/>Year:<br/>2022","Turtle ID:<br/>608<br/> <br/>Year:<br/>2022","Turtle ID:<br/>598<br/> <br/>Year:<br/>2022","Turtle ID:<br/>603Stickel<br/> <br/>Year:<br/>2022","Turtle ID:<br/>515<br/> <br/>Year:<br/>2022","Turtle ID:<br/>587<br/> <br/>Year:<br/>2022","Turtle ID:<br/>515<br/> <br/>Year:<br/>2022","Turtle ID:<br/>646<br/> <br/>Year:<br/>2022","Turtle ID:<br/>611<br/> <br/>Year:<br/>2022","Turtle ID:<br/>614<br/> <br/>Year:<br/>2022","Turtle ID:<br/>610<br/> <br/>Year:<br/>2022","Turtle ID:<br/>612<br/> <br/>Year:<br/>2022","Turtle ID:<br/>515<br/> <br/>Year:<br/>2022","Turtle ID:<br/>613<br/> <br/>Year:<br/>2022","Turtle ID:<br/>646<br/> <br/>Year:<br/>2022","Turtle ID:<br/>143<br/> <br/>Year:<br/>2022","Turtle ID:<br/>432<br/> <br/>Year:<br/>2022","Turtle ID:<br/>143<br/> <br/>Year:<br/>2022","Turtle ID:<br/>625<br/> <br/>Year:<br/>2022","Turtle ID:<br/>615<br/> <br/>Year:<br/>2022","Turtle ID:<br/>616<br/> <br/>Year:<br/>2022","Turtle ID:<br/>432<br/> <br/>Year:<br/>2022","Turtle ID:<br/>4132<br/> <br/>Year:<br/>2022","Turtle ID:<br/>611<br/> <br/>Year:<br/>2022","Turtle ID:<br/>564<br/> <br/>Year:<br/>2022","Turtle ID:<br/>617<br/> <br/>Year:<br/>2022","Turtle ID:<br/>331<br/> <br/>Year:<br/>2022","Turtle ID:<br/>618<br/> <br/>Year:<br/>2022","Turtle ID:<br/>560<br/> <br/>Year:<br/>2022","Turtle ID:<br/>599<br/> <br/>Year:<br/>2022","Turtle ID:<br/>619<br/> <br/>Year:<br/>2022","Turtle ID:<br/>432<br/> <br/>Year:<br/>2022","Turtle ID:<br/>143<br/> <br/>Year:<br/>2022","Turtle ID:<br/>7704<br/> <br/>Year:<br/>2022","Turtle ID:<br/>620<br/> <br/>Year:<br/>2022","Turtle ID:<br/>16200<br/> <br/>Year:<br/>2022","Turtle ID:<br/>460<br/> <br/>Year:<br/>2022","Turtle ID:<br/>594<br/> <br/>Year:<br/>2022","Turtle ID:<br/>616<br/> <br/>Year:<br/>2022","Turtle ID:<br/>621<br/> <br/>Year:<br/>2022","Turtle ID:<br/>7704<br/> <br/>Year:<br/>2022","Turtle ID:<br/>560<br/> <br/>Year:<br/>2022","Turtle ID:<br/>528<br/> <br/>Year:<br/>2022","Turtle ID:<br/>622<br/> <br/>Year:<br/>2022","Turtle ID:<br/>510<br/> <br/>Year:<br/>2022","Turtle ID:<br/>4110<br/> <br/>Year:<br/>2022","Turtle ID:<br/>509<br/> <br/>Year:<br/>2022","Turtle ID:<br/>623<br/> <br/>Year:<br/>2022","Turtle ID:<br/>624<br/> <br/>Year:<br/>2022","Turtle ID:<br/>9006<br/> <br/>Year:<br/>2022","Turtle ID:<br/>445<br/> <br/>Year:<br/>2022","Turtle ID:<br/>567<br/> <br/>Year:<br/>2022","Turtle ID:<br/>626<br/> <br/>Year:<br/>2022","Turtle ID:<br/>445<br/> <br/>Year:<br/>2022","Turtle ID:<br/>9002<br/> <br/>Year:<br/>2022","Turtle ID:<br/>627<br/> <br/>Year:<br/>2022","Turtle ID:<br/>3201<br/> <br/>Year:<br/>2022","Turtle ID:<br/>646<br/> <br/>Year:<br/>2022","Turtle ID:<br/>625<br/> <br/>Year:<br/>2022","Turtle ID:<br/>4110<br/> <br/>Year:<br/>2022","Turtle ID:<br/>628<br/> <br/>Year:<br/>2022","Turtle ID:<br/>7704<br/> <br/>Year:<br/>2022","Turtle ID:<br/>629<br/> <br/>Year:<br/>2022","Turtle ID:<br/>459<br/> <br/>Year:<br/>2022","Turtle ID:<br/>561<br/> <br/>Year:<br/>2022","Turtle ID:<br/>564<br/> <br/>Year:<br/>2022","Turtle ID:<br/>UMJ5<br/> <br/>Year:<br/>2022","Turtle ID:<br/>174<br/> <br/>Year:<br/>2022","Turtle ID:<br/>640<br/> <br/>Year:<br/>2022","Turtle ID:<br/>9002<br/> <br/>Year:<br/>2022","Turtle ID:<br/>5090<br/> <br/>Year:<br/>2022","Turtle ID:<br/>543<br/> <br/>Year:<br/>2022","Turtle ID:<br/>7704<br/> <br/>Year:<br/>2022","Turtle ID:<br/>631<br/> <br/>Year:<br/>2022","Turtle ID:<br/>588<br/> <br/>Year:<br/>2022","Turtle ID:<br/>9204<br/> <br/>Year:<br/>2022","Turtle ID:<br/>632<br/> <br/>Year:<br/>2022","Turtle ID:<br/>UMJ6<br/> <br/>Year:<br/>2022","Turtle ID:<br/>633<br/> <br/>Year:<br/>2022","Turtle ID:<br/>641<br/> <br/>Year:<br/>2022","Turtle ID:<br/>9002<br/> <br/>Year:<br/>2022","Turtle ID:<br/>4110<br/> <br/>Year:<br/>2022","Turtle ID:<br/>634<br/> <br/>Year:<br/>2022","Turtle ID:<br/>506(546)<br/> <br/>Year:<br/>2022","Turtle ID:<br/>635<br/> <br/>Year:<br/>2022","Turtle ID:<br/>528<br/> <br/>Year:<br/>2022","Turtle ID:<br/>646<br/> <br/>Year:<br/>2022","Turtle ID:<br/>560<br/> <br/>Year:<br/>2022","Turtle ID:<br/>636<br/> <br/>Year:<br/>2022","Turtle ID:<br/>514<br/> <br/>Year:<br/>2022","Turtle ID:<br/>7704<br/> <br/>Year:<br/>2022","Turtle ID:<br/>631<br/> <br/>Year:<br/>2022","Turtle ID:<br/>614<br/> <br/>Year:<br/>2022","Turtle ID:<br/>646<br/> <br/>Year:<br/>2022","Turtle ID:<br/>605<br/> <br/>Year:<br/>2022","Turtle ID:<br/>637Stickel<br/> <br/>Year:<br/>2022","Turtle ID:<br/>508<br/> <br/>Year:<br/>2022","Turtle ID:<br/>540<br/> <br/>Year:<br/>2022","Turtle ID:<br/>646<br/> <br/>Year:<br/>2022","Turtle ID:<br/>642<br/> <br/>Year:<br/>2022","Turtle ID:<br/>459<br/> <br/>Year:<br/>2022","Turtle ID:<br/>637<br/> <br/>Year:<br/>2022","Turtle ID:<br/>567<br/> <br/>Year:<br/>2022","Turtle ID:<br/>2250<br/> <br/>Year:<br/>2022","Turtle ID:<br/>598<br/> <br/>Year:<br/>2022","Turtle ID:<br/>640<br/> <br/>Year:<br/>2022","Turtle ID:<br/>505<br/> <br/>Year:<br/>2022","Turtle ID:<br/>508<br/> <br/>Year:<br/>2022","Turtle ID:<br/>524<br/> <br/>Year:<br/>2022","Turtle ID:<br/>518<br/> <br/>Year:<br/>2022","Turtle ID:<br/>539<br/> <br/>Year:<br/>2022","Turtle ID:<br/>619<br/> <br/>Year:<br/>2022","Turtle ID:<br/>220<br/> <br/>Year:<br/>2022","Turtle ID:<br/>638<br/> <br/>Year:<br/>2022","Turtle ID:<br/>613<br/> <br/>Year:<br/>2022","Turtle ID:<br/>564<br/> <br/>Year:<br/>2022","Turtle ID:<br/>9006<br/> <br/>Year:<br/>2022","Turtle ID:<br/>626<br/> <br/>Year:<br/>2022","Turtle ID:<br/>643<br/> <br/>Year:<br/>2022"],null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]}],"limits":{"lat":[39.047957,39.061301],"lng":[-76.827004,-76.7953943333333]}},"evals":[],"jsHooks":[]}</script>
+<p class="caption">
+<strong>Figure 5:</strong> Interactive map of turtle capture locations for 2019-2022
+</p>
+</div>
+<div class="figure">
+<img src="Report2-andy_files/figure-html/unnamed-chunk-19-1.png" alt="**Figure 6:** Represents capture locations from 2019-2022 with lines connecting repeat individual captures." width="672" />
+<p class="caption">
+<strong>Figure 6:</strong> Represents capture locations from 2019-2022 with lines connecting repeat individual captures.
+</p>
+</div>
+<div class="figure">
+<img src="Report2-andy_files/figure-html/unnamed-chunk-20-1.png" alt="**Figure 7:** Represents the maximum distance traveled by each individual between 2019-2022." width="672" />
+<p class="caption">
+<strong>Figure 7:</strong> Represents the maximum distance traveled by each individual between 2019-2022.
+</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
